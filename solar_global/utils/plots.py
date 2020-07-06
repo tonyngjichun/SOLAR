@@ -121,8 +121,6 @@ def plot_ranks_and_attentions(model_retr, qimages, images, ranks, gnd, bbxs, sum
 
         n = min(len(g['ok']), n_samples)# + 1
 
-        print(n)
-
         # simply plot the images
         fig = plt.figure(dpi=400) 
         grid = fig.add_gridspec(1, n_samples, wspace=0.1, hspace=0.1)

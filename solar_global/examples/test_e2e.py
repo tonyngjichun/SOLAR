@@ -60,35 +60,6 @@ parser.add_argument('--gpu-id', '-g', default='0', metavar='N',
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 warnings.filterwarnings("ignore", category=UserWarning)
 
-def main():
-    args = parser.parse_args()
-
-    # loading network
-    # pretrained networks (downloaded automatically)
-    print(">> Loading network:\n>>>> '{}'".format(args.network))
-    state = torch.load(os.path.join(get_data_root(), 'networks', args.network))
-
-    # parsing net params from meta
-    # architecture, pooling, mean, std required
-    # the rest has default values, in case that is doesnt exist
-    net_params = {}
-    net_params['architecture'] = state['meta']['architecture']
-    net_params['pooling'] = state['meta']['pooling']
-    net_params['local_whitening'] = state['meta'].get('local_whitening', False)
-    net_params['regional'] = state['meta'].get('regional', False)
-    net_params['whitening'] = state['meta'].get('whitening', False)
-    net_params['mean'] = state['meta']['mean']
-    net_params['std'] = state['meta']['std']
-    net_params['pretrained'] = False
-    net_params['pretrained_type'] = None
-    net_params['mode'] = 'test'
-    net_params['soa'] = args.soa 
-    net_params['soa_layers'] = args.soa_layers 
-    net = init_network(net_params) 
-    net.load_state_dict(state['state_dict'])
-
-
-
 
 def tb_setup(save_dir):
     # Setup for tensorboard
@@ -145,8 +116,8 @@ def main():
     net_params['pretrained'] = False
     net_params['pretrained_type'] = None
     net_params['mode'] = 'test'
-    net_params['soa'] = True
-    net_params['soa_layers'] = '45'
+    net_params['soa'] = state['meta']['soa'] 
+    net_params['soa_layers'] = state['meta']['soa_layers']
     net = init_network(net_params) 
     net.load_state_dict(state['state_dict'])
 
@@ -177,7 +148,8 @@ def main():
     # evaluate on test datasets
     datasets = args.datasets.split(',')
     for dataset in datasets:
-        summary  = tb_setup(os.path.join('specs/rank_and_attentions/', dataset, args.network))
+        summary_ranks  = tb_setup(os.path.join('specs/ranks/', dataset, args.network))
+        summary_attns  = tb_setup(os.path.join('specs/attentions/', dataset, args.network))
         start = time.time()
 
         print('>> {}: Extracting...'.format(dataset))
@@ -215,8 +187,8 @@ def main():
         compute_map_and_print(dataset, ranks, cfg['gnd'])
 
         for protocol in ['easy', 'medium', 'hard']:
-            plot_ranks(qimages, images, ranks, cfg['gnd'], bbxs, summary, dataset, 'solar-best: ', 20, protocol)
-            plot_ranks_and_attentions(net, qimages, images, ranks, cfg['gnd'], bbxs, summary, dataset, 10, protocol) 
+            plot_ranks(qimages, images, ranks, cfg['gnd'], bbxs, summary_ranks, dataset, 'solar-best: ', 20, protocol)
+            plot_ranks_and_attentions(net, qimages, images, ranks, cfg['gnd'], bbxs, summary_attns, dataset, 10, protocol) 
 
         print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
 
