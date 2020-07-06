@@ -10,7 +10,7 @@ import torchvision
 
 from solar_global.layers.pooling import MAC, SPoC, GeM, GeMmp, RMAC, Rpool
 from solar_global.layers.normalization import L2N, PowerLaw
-#from solar_global.datasets.genericdataset import ImagesFromList
+from solar_global.datasets.genericdataset import ImagesFromList
 from solar_global.utils.general import get_data_root
 from solar_global.networks.networks import ResNetSOAs
 
@@ -299,6 +299,39 @@ def init_network(params):
 
     return net
 
+def extract_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1, print_freq=10, summary=None, mode='train'):
+    # moving network to gpu and eval mode
+    net.cuda()
+    net.eval()
+
+    # creating dataset loader
+    loader = torch.utils.data.DataLoader(
+            ImagesFromList(root='', images=images, imsize=image_size, bbxs=bbxs, transform=transform, mode=mode),
+            batch_size=1, shuffle=False, num_workers=8, pin_memory=True
+        )
+
+    # extracting vectors
+    with torch.no_grad():
+        vecs = torch.zeros(net.meta['outputdim'], len(images))
+        with tqdm(total=len(images)) as pbar:
+            for i, _input in enumerate(loader):
+                _input = _input.cuda()
+
+                if len(ms) == 1 and ms[0] == 1:
+                    vecs[:, i] = extract_ss(net, _input)
+                else:
+                    vecs[:, i] = extract_ms(net, _input, ms, msp)
+                
+                if (i+1) % print_freq == 0:
+                    pbar.update(print_freq)
+                elif (i+1) == len(images):
+                    pbar.update(len(images) % print_freq)
+
+    #        print('\r>>>> {}/{} done...'.format((i+1), len(images)), end='')
+            print('')
+
+
+    return vecs
 
 def extract_ss(net, _input):
     return net(_input).cpu().data.squeeze()

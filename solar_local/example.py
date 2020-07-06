@@ -10,7 +10,7 @@ def main(options):
     solar_local = SOLAR_LOCAL(soa=options.soa, soa_layers=options.soa_layers)
     
     model_weight_path = os.path.join(options.weights_path, 
-                        'solar_local' + options.soa_layers + '-' 
+                        'local-solar-' + options.soa_layers + '-' 
                         + options.train_set + '.pth'
                         )
     state_dict = torch.load(model_weight_path)

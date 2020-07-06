@@ -191,7 +191,7 @@ class ResNetSOAs(nn.Module):
             x, attn_m2 = self.soa4(x)
         
         x = self.conv5_x(x)
-        if '5' in self.sa_layers:
+        if '5' in self.soa_layers:
             x, attn_m1 = self.soa5(x)
 
         return x

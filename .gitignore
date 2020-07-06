@@ -152,8 +152,10 @@ dmypy.json
 # specs
 specs/*
 
-# dataset
+# datasets
 data/datasets/*
+data/test/*
+data/test/*
 
 # vscode 
 .vscode*
@@ -163,4 +165,5 @@ data/datasets/*
 
 # debug test scripts
 try.py
+
 

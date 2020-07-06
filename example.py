@@ -31,13 +31,13 @@ PRETRAINED = {
 }
 
 parser = argparse.ArgumentParser(description='PyTorch CNN Image Retrieval Example')
-parser.add_argument('--network', '-n', metavar='NETWORK', default='solar-best.pth', 
+parser.add_argument('--network', '-n', metavar='NETWORK', default='resnet101-solar-best.pth', 
                     help="network to be evaluated: " +
                         " | ".join(PRETRAINED.keys()))
 parser.add_argument('--image-path', '-impath', dest='image_path', type=str, default='try.jpg')
 parser.add_argument('--image-size', '-imsize', dest='image_size', default=1024, type=int, metavar='N',
                     help="maximum size of longer image side used for testing (default: 1024)")
-parser.add_argument('--multiscale', '-ms', metavar='MULTISCALE', default='[1]',
+parser.add_argument('--multiscale', '-ms', metavar='MULTISCALE', default='[1, 2**(1/2), 1/2**(1/2)]',
                     help="use multiscale vectors for testing, " +
                     " examples: '[1]' | '[1, 1/2**(1/2), 1/2]' | '[1, 2**(1/2), 1/2**(1/2)]' (default: '[1]')")
 
@@ -126,7 +126,7 @@ def main():
         ax_attn.imshow(attn, cmap='jet', alpha=.5)
         ax_desc.plot(desc.tolist())
     
-        plt.tight_layout
+        plt.tight_layout()
 
         plt.show()
 
