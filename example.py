@@ -14,11 +14,11 @@ from torch.utils.model_zoo import load_url
 import torch.nn.functional as F
 from torchvision import transforms
 
-from cirtorch.networks.imageretrievalnet import init_network, extract_ss, extract_ms
-from cirtorch.utils.general import get_data_root, htime
+from solar_global.networks.imageretrievalnet import init_network, extract_ss, extract_ms
+from solar_global.utils.general import get_data_root, htime
 
 """
-This script and the module `cirtorch' is based on and modified from github.com/filipradenovic/cnnimageretrieval-pytorch, which has an MIT license. For more details please refer to https://github.com/filipradenovic/cnnimageretrieval-pytorch/blob/master/LICENSE
+This script and the module `solar_global' is heeavily based on and modified from github.com/filipradenovic/cnnimageretrieval-pytorch, which has an MIT license. For more details please refer to https://github.com/filipradenovic/cnnimageretrieval-pytorch/blob/master/LICENSE
 """
 
 PRETRAINED = {
@@ -63,8 +63,8 @@ def main():
     net_params['pretrained'] = False
     net_params['pretrained_type'] = None
     net_params['mode'] = 'test'
-    net_params['self_attn'] = True
-    net_params['sa_layers'] = '45'
+    net_params['soa'] = True
+    net_params['soa_layers'] = '45'
     net = init_network(net_params) 
     net.load_state_dict(state['state_dict'])
 
