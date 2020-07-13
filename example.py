@@ -2,7 +2,6 @@ import argparse
 import os
 import time
 import pickle
-import pdb
 
 import numpy as np
 import matplotlib.pyplot as plt

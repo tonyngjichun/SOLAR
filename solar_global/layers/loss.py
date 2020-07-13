@@ -46,3 +46,12 @@ class TripletLoss(nn.Module):
 
     def __repr__(self):
         return self.__class__.__name__ + '(' + 'margin=' + '{:.4f}'.format(self.margin) + ')'
+
+
+class SOSLoss(nn.Module):
+
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x, label):
+        return LF.sos_loss(x, label)
