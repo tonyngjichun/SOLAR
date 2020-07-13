@@ -1,4 +1,6 @@
 import os
+import urllib.request
+import tarfile
 
 def download_test(data_dir):
     """
