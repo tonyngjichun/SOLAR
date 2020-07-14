@@ -32,7 +32,6 @@ PRETRAINED = {
 datasets_names = ['oxford5k', 'paris6k', 'roxford5k', 'rparis6k', 'revisitop1m']
 whitening_names = ['retrieval-SfM-30k', 'retrieval-SfM-120k']
 
-parser = argparse.ArgumentParser(description='PyTorch CNN Image Retrieval Testing End-to-End')
 
 # test options
 parser = argparse.ArgumentParser(description='PyTorch CNN Image Retrieval Example')
@@ -165,21 +164,14 @@ def main():
 
         # extract database and query vectors
         print('>> {}: database images...'.format(dataset))
-        if os.path.exists(args.network + '_vecs_' + dataset + '.pt'):
-            vecs = torch.load(args.network + '_vecs_' + dataset + '.pt')
-        else:
-            vecs = extract_vectors(net, images, args.image_size, transform, ms=ms, mode='test')
-            #torch.save(vecs.detach().numpy(), args.network + '_vecs_' + dataset + '.pt')
-            vecs = vecs.numpy()
-        print('>> {}: query images...'.format(dataset))
-        if os.path.exists(args.network + '_qvecs_' + dataset + '.pt'):
-            qvecs = torch.load(args.network + '_qvecs_' + dataset + '.pt')
-        else:
-            qvecs = extract_vectors(net, qimages, args.image_size, transform, bbxs=bbxs, ms=ms, mode='test')
-            #torch.save(qvecs.detach().numpy(), args.network +'_qvecs_' + dataset + '.pt')
-            qvecs = qvecs.numpy()
-        print('>> {}: Evaluating...'.format(dataset))
+        vecs = extract_vectors(net, images, args.image_size, transform, ms=ms, mode='test')
+        vecs = vecs.numpy()
 
+        print('>> {}: query images...'.format(dataset))
+        qvecs = extract_vectors(net, qimages, args.image_size, transform, bbxs=bbxs, ms=ms, mode='test')
+        qvecs = qvecs.numpy()
+
+        print('>> {}: Evaluating...'.format(dataset))
 
         # search, rank, and print
         scores = np.dot(vecs.T, qvecs)

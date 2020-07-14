@@ -175,8 +175,8 @@ def download_distractors(data_dir):
     nfiles = 100
     src_dir = 'http://ptak.felk.cvut.cz/revisitop/revisitop1m/jpg'
     dl_files = 'revisitop1m.{}.tar.gz'
-    dst_dir = os.path.join(data_dir, 'datasets', dataset, 'jpg')
-    dst_dir_tmp = os.path.join(data_dir, 'datasets', dataset, 'jpg_tmp')
+    dst_dir = os.path.join(data_dir, 'test', dataset, 'jpg')
+    dst_dir_tmp = os.path.join(data_dir, 'test', dataset, 'jpg_tmp')
     if not os.path.isdir(dst_dir):
         print('>> Dataset {} directory does not exist.\n>> Creating: {}'.format(dataset, dst_dir))
         if not os.path.isdir(dst_dir_tmp):
@@ -211,7 +211,7 @@ def download_distractors(data_dir):
 
         # download image list
         gnd_src_dir = 'http://ptak.felk.cvut.cz/revisitop/revisitop1m/'
-        gnd_dst_dir = os.path.join(data_dir, 'datasets', dataset)
+        gnd_dst_dir = os.path.join(data_dir, 'test', dataset)
         gnd_dl_file = '{}.txt'.format(dataset)
         gnd_src_file = os.path.join(gnd_src_dir, gnd_dl_file)
         gnd_dst_file = os.path.join(gnd_dst_dir, gnd_dl_file)

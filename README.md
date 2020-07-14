@@ -36,10 +36,10 @@ Here you can try out our pretrained model `resnet101-solar-best.pth` on the [Rev
 
 <details>
 <summary><b>Testing on R-Oxford, R-Paris</b></summary></br>
-Given that you've successfully downloaded the global model weights, run
+After you've successfully downloaded the global model weights, run
 
 ```
-python3 -m solar_global.examples.test_e2e
+python3 -m solar_global.examples.test
 ```
 
 After a while, you should be able to get results like this:
@@ -63,11 +63,19 @@ You should be able view them on your browser at `localhost:6006`. Here's an exam
 <details>
 <summary><b>Testing with the extra 1-million distractors</b></summary></br>
 
-First, make sure that you `resnet101-solar-best.pth_vecs_revisitop1m.pt` is properly downloaded in the main directory. Then, run 
+First, make sure that you have `resnet101-solar-best.pth_vecs_revisitop1m.pt` is properly downloaded in the main directory. If you decide to extract the descriptors on your own, you could run
 ```
-python3 -m solar_global.examples.test_e2e_1m
+python3 -m solar_global.examples.extract_1m
 ```
-You should get results like
+
+This script would download and extract the [1M distractors set](https://github.com/filipradenovic/revisitop) and save them into `data/test/revisitop1m/`. This dataset is quite large (400GB+), so depending on your network & GPU, the whole process of downloading + extracting descriptors can take from a couple of days to a week. In our setting (~100MBps, V100), the download + extraction takes ~10 hours and the descriptors ~30 hours to be extracted.
+
+Now, make sure that `resnet101-solar-best.pth_vecs_revisitop1m.pt` is in the main directory. Then, you can run
+
+```
+python3 -m solar_global.examples.test_1m
+```
+and get results as below 
 ```
 >> roxford5k: mAP E: 72.04, M: 53.49, H: 29.89
 >> roxford5k: mP@k[1, 5, 10] E: [88.24 81.99 76.96], M: [88.57 82.29 76.71], H: [74.29 58.29 48.86]
@@ -78,6 +86,8 @@ You should get results like
 </details>
 
 ## Visualisating second-order attention maps
+
+***TODO***
 
 ## Citation
 If you use this repository in you work, please cite our ECCV 2020 paper:

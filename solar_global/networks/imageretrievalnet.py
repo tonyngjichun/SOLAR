@@ -326,9 +326,6 @@ def extract_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1
                 elif (i+1) == len(images):
                     pbar.update(len(images) % print_freq)
 
-    #        print('\r>>>> {}/{} done...'.format((i+1), len(images)), end='')
-            print('')
-
 
     return vecs
 
