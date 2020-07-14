@@ -143,11 +143,13 @@ dmypy.json
 *.JPG
 *.PNG
 *.h5
+*.ppm
 
 # pytorch
 *.pytorch
 *.pth
 *.pth*
+*.pt
 
 # specs
 specs/*
@@ -165,5 +167,6 @@ data/test/*
 
 # debug test scripts
 try.py
+*try*
 
 

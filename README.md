@@ -1,6 +1,6 @@
 # SOLAR: Second-Order Loss and Attention for Image Retrieval
 
-![](assets/teaser.png)
+![teaser](assets/teaser.png)
 
 This repository contains the PyTorch implementation of our ECCV 2020 paper "SOLAR: Second-Order Loss and Attention for Image Retrieval".
 
@@ -33,7 +33,11 @@ The global model is saved at `data/networks/resnet101-solar-best.pth` and the lo
 
 ## Testing our global descriptor
 Here you can try out our pretrained model `resnet101-solar-best.pth` on the [Revisiting Oxford and Paris](https://github.com/filipradenovic/revisitop) dataset
-### Testing on R-Oxford, R-Paris
+
+<details>
+<summary><b>Testing on R-Oxford, R-Paris</b></summary></br>
+Given that you've successfully downloaded the global model weights, run
+
 ```
 python3 -m solar_global.examples.test_e2e
 ```
@@ -49,11 +53,19 @@ After a while, you should be able to get results like this:
 
 Retrieval results is visualised in `specs/` using
 ```
-tensorboard --logdir spec/ --samples_per_plugin images=1000
+tensorboard --logdir specs/ --samples_per_plugin images=1000
 ```
-And you can view them on your browser at `localhost:6006`.
+You should be able view them on your browser at `localhost:6006`. Here's an example
 
-### Testing with the extra 1-million distractors
-> python3 -m solar_global.examples.test_e2e_1m
+![ranks](assets/ranks.png)
+</details>
 
-## Visualisation second-order attention maps
+<details>
+<summary><b>Testing with the extra 1-million distractors</b></summary></br>
+
+```
+python3 -m solar_global.examples.test_e2e_1m
+```
+</details>
+
+## Visualisating second-order attention maps
