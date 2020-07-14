@@ -63,9 +63,29 @@ You should be able view them on your browser at `localhost:6006`. Here's an exam
 <details>
 <summary><b>Testing with the extra 1-million distractors</b></summary></br>
 
+First, make sure that you `resnet101-solar-best.pth_vecs_revisitop1m.pt` is properly downloaded in the main directory. Then, run 
 ```
 python3 -m solar_global.examples.test_e2e_1m
+```
+You should get results like
+```
+>> roxford5k: mAP E: 72.04, M: 53.49, H: 29.89
+>> roxford5k: mP@k[1, 5, 10] E: [88.24 81.99 76.96], M: [88.57 82.29 76.71], H: [74.29 58.29 48.86]
+
+>> rparis6k: mAP E: 83.35, M: 59.19, H: 33.41
+>> rparis6k: mP@k[1, 5, 10] E: [98.57 95.14 93.57], M: [98.57 96.29 94.86], H: [92.86 89.14 81.57]
 ```
 </details>
 
 ## Visualisating second-order attention maps
+
+## Citation
+If you use this repository in you work, please cite our ECCV 2020 paper:
+```
+@inproceedings{solar2020eccv,
+    author    = {Ng, Tony and Balntas, Vassileios and Tian, Yurun and Mikolajczyk, Krystian},
+    title     = {{SOLAR}: Second-Order Loss and Attention for Image Retrieval},
+    booktitle = {ECCV},
+    year      = {2020}
+}
+```

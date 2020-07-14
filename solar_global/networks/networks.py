@@ -96,7 +96,8 @@ class SOABlock(nn.Module):
         self.out_ch = in_ch
         self.mid_ch = in_ch // k
 
-        print('Non-Local Block:', self.in_ch, self.out_ch, self.mid_ch)
+        print('Num channels:  in    out    mid')
+        print('               {:>4d}  {:>4d}  {:>4d}'.format(self.in_ch, self.out_ch, self.mid_ch))
 
         self.f = nn.Sequential(
                 nn.Conv2d(self.in_ch, self.mid_ch, (1, 1), (1, 1)),
@@ -171,8 +172,10 @@ class ResNetSOAs(nn.Module):
 
         self.soa_layers = soa_layers
         if '4' in self.soa_layers:
+            print("SOA_4:")
             self.soa4 = SOABlock(in_ch=last_feat_in // 2, k=4)
         if '5' in self.soa_layers:
+            print("SOA_5:")
             self.soa5 = SOABlock(in_ch=last_feat_in, k=2)
 
     def forward(self, x):
