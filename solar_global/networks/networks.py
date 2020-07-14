@@ -129,7 +129,7 @@ class SOABlock(nn.Module):
         z = torch.bmm(f_x.permute(0, 2, 1), g_x) # B * N * N, where N = H*W
 
         # for visualisation only
-        attn = self.softmax((self.mid_ch ** -.5) * z)
+        attn = self.softmax((self.mid_ch ** -.75) * z)
         
         z = torch.bmm(attn, h_x.permute(0, 2, 1)) # B * N * mid_ch, where N = H*W
         z = z.permute(0, 2, 1).view(B, self.mid_ch, H, W) # B * mid_ch * H * W
@@ -137,13 +137,13 @@ class SOABlock(nn.Module):
         z = self.v(z)
         z = z + x
 
-        attn = attn.mean(dim=1).view(B, H, W).unsqueeze_(1)
+        #attn = attn.mean(dim=1).view(B, H, W).unsqueeze_(1)
 
         return z, attn
 
 
 class ResNetSOAs(nn.Module):
-    def __init__(self, architecture='resnet101', pretrained_type='gl18', soa_layers='45'):
+    def __init__(self, architecture='resnet101', pretrained_type='gl18', soa_layers='45', mode='train'):
         super(ResNetSOAs, self).__init__()
 
         base_model = vars(models)[architecture](pretrained=True)
@@ -178,6 +178,9 @@ class ResNetSOAs(nn.Module):
             print("SOA_5:")
             self.soa5 = SOABlock(in_ch=last_feat_in, k=2)
 
+        # switch for visualisation attention
+        self.mode = mode
+
     def forward(self, x):
         attn_m2 = torch.zeros(1).to(x.device)
         attn_m1 = torch.zeros(1).to(x.device)
@@ -191,10 +194,13 @@ class ResNetSOAs(nn.Module):
             x = self.conv4_x(x)
 
         if '4' in self.soa_layers:
-            x, attn_m2 = self.soa4(x)
+            x, soa_m2 = self.soa4(x)
         
         x = self.conv5_x(x)
         if '5' in self.soa_layers:
-            x, attn_m1 = self.soa5(x)
+            x, soa_m1 = self.soa5(x)
+
+        if self.mode == 'draw':
+            return x, soa_m2, soa_m1
 
         return x

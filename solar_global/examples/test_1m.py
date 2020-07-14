@@ -148,8 +148,6 @@ def main():
     # evaluate on test datasets
     datasets = args.datasets.split(',')
     for dataset in datasets:
-#        summary_ranks  = tb_setup(os.path.join('specs/ranks/', dataset, args.network))
-#        summary_attns  = tb_setup(os.path.join('specs/attentions/', dataset, args.network))
         start = time.time()
 
         print('>> {}: Extracting...'.format(dataset))
@@ -183,10 +181,6 @@ def main():
         scores = np.dot(vecs.T, qvecs)
         ranks = np.argsort(-scores, axis=0)
         compute_map_and_print(dataset, ranks, cfg['gnd'])
-
-#        for protocol in ['easy', 'medium', 'hard']:
-#            plot_ranks(qimages, images, ranks, cfg['gnd'], bbxs, summary_ranks, dataset, 'solar-best: ', 20, protocol)
-#            plot_ranks_and_attentions(net, qimages, images, ranks, cfg['gnd'], bbxs, summary_attns, dataset, 10, protocol) 
 
         print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
 

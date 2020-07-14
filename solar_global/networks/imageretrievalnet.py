@@ -100,7 +100,7 @@ OUTPUT_DIM = {
 class SOLAR_Global_Retrieval(nn.Module):
     def __init__(self, architecture, features, lwhiten, pool, whiten, meta, mode='train', pretrained_type='gl18', soa_layers='45'):
         super(SOLAR_Global_Retrieval, self).__init__()
-        self.features = ResNetSOAs(architecture, pretrained_type, soa_layers)
+        self.features = ResNetSOAs(architecture, pretrained_type, soa_layers, mode)
         self.lwhiten = lwhiten
         self.pool = pool
         self.whiten = whiten
@@ -294,7 +294,7 @@ def init_network(params):
     }
 
     # create a generic image retrieval network
-    net = SOLAR_Global_Retrieval(architecture, features, lwhiten, pool, whiten, meta, pretrained_type=pretrained_type, soa_layers=soa_layers)
+    net = SOLAR_Global_Retrieval(architecture, features, lwhiten, pool, whiten, meta, pretrained_type=pretrained_type, soa_layers=soa_layers, mode=mode)
 
     return net
 

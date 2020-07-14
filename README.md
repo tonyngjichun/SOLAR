@@ -16,6 +16,7 @@ Before you go any further, please check out [Filip Radenovic's great repository 
 ## Requirements
 - Python 3
 - [PyTorch](https://pytorch.org/get-started/locally/) tested on 1.3.0 - 1.5.1, torchvision 0.5+
+- [opencv-python (cv2)](https://pypi.org/project/opencv-python/) tested on 3.3.0.10
 - [TensorBoard](https://www.tensorflow.org/tensorboard) tested on 2.0.0+
 - numpy
 - PIL
@@ -63,7 +64,7 @@ You should be able view them on your browser at `localhost:6006`. Here's an exam
 <details>
 <summary><b>Testing with the extra 1-million distractors</b></summary></br>
 
-First, make sure that you have `resnet101-solar-best.pth_vecs_revisitop1m.pt` is properly downloaded in the main directory. If you decide to extract the descriptors on your own, you could run
+If you decide to extract the descriptors on your own, you could run
 ```
 python3 -m solar_global.examples.extract_1m
 ```
@@ -87,7 +88,21 @@ and get results as below
 
 ## Visualisating second-order attention maps
 
-***TODO***
+<details>
+<summary><b> Using our interactive visualisation tool </b></summary></br>
+We provide a small demo for you to click around an image and interactively visualise the second-order attention map at that location.
+
+First, run
+```
+python3 -m demo.interactive_soa
+```
+</details>
+
+<details>
+<summary><b> Using Jupyter-Notebook </b></summary></br>
+</details>
+
+## Testing our local descriptor
 
 ## Citation
 If you use this repository in you work, please cite our ECCV 2020 paper:

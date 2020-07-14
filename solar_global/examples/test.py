@@ -17,7 +17,7 @@ from solar_global.datasets.testdataset import configdataset
 from solar_global.utils.download import download_train, download_test, download_distractors
 from solar_global.utils.evaluate import compute_map_and_print
 from solar_global.utils.general import get_data_root, htime
-from solar_global.utils.plots import plot_ranks, plot_ranks_and_attentions
+from solar_global.utils.plots import plot_ranks
 
 
 PRETRAINED = {
@@ -180,7 +180,6 @@ def main():
 
         for protocol in ['easy', 'medium', 'hard']:
             plot_ranks(qimages, images, ranks, cfg['gnd'], bbxs, summary_ranks, dataset, 'solar-best: ', 20, protocol)
-            plot_ranks_and_attentions(net, qimages, images, ranks, cfg['gnd'], bbxs, summary_attns, dataset, 10, protocol) 
 
         print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
 

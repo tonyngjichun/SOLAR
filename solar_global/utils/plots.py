@@ -1,4 +1,6 @@
+import cv2
 import numpy as np
+
 import torch
 import torch.nn.functional as F
 from torchvision import transforms
@@ -6,6 +8,7 @@ from tqdm import tqdm
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+from matplotlib.patches import Arrow, Circle
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from solar_global.datasets.datahelpers import default_loader, unnormalise
@@ -77,110 +80,68 @@ def plot_ranks(qimages, images, ranks, gnd, bbxs, summary, dataset, epoch=1, n_s
         fig.suptitle(str(epoch) + dataset + '-' + protocol, fontsize=12)
         summary.add_figure('/' + dataset + '/' + protocol + '/' + str(epoch), fig, global_step=i+1)
 
-def plot_ranks_and_attentions(model_retr, qimages, images, ranks, gnd, bbxs, summary, dataset, n_samples=20, protocol='hard'):
-    def get_attn(model_retr, image):
 
-        image_tensor = transforms.ToTensor()(image).unsqueeze(0).cuda()
-        image_tensor = unnormalise(image_tensor)
+def draw_soa_map(img, model_retr, refPt):
 
-        h, w = image_tensor.shape[-2:]
+    normalize = transforms.Normalize(mean=model_retr.meta['mean'], std=model_retr.meta['std'])
+    transform = transforms.Compose([
+            transforms.ToTensor(),
+            normalize,
+        ])
 
-        try:
-            fmap = model_retr.features(image_tensor)
-        except:
-            fmap, _, _ = model_retr.features(image_tensor)
-            
-        p = model_retr.pool.p
+    img_tensor = transform(img).unsqueeze(0).cuda()
+    p = model_retr.pool.p
 
-        attn = torch.pow(fmap[0].clamp(min=1e-6), p)
-        attn = torch.sum(attn, -3, keepdim=True)
-        if len(attn.shape) == 3:
-            attn = attn.unsqueeze(0)
+    fig = plt.figure(dpi=200)
+    ax = fig.add_subplot(111)
+    # ax2 = fig.add_subplot(121)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    # ax2.set_xticks([])
+    # ax2.set_yticks([])
 
-        attn = F.interpolate(attn, size=(h, w), mode='bilinear')
-        attn = (attn - attn.min()) / (attn.max() - attn.min())
-        attn = attn.squeeze().detach().cpu()
+    h, w = img_tensor.shape[-2:]
 
-        return attn
+    with torch.no_grad():
+        v_temp, _, soa_m1 = model_retr.features(img_tensor)
+        
+        h_m1, w_m1 = v_temp.shape[-2:]
 
-    print('Generating attention figures... Protocol:', protocol)
-    step = 1
-    if dataset.startswith('megadepth'):
-        step = 15
-    for i in tqdm(range(0, len(qimages), step)):
-        g = {}
-        if protocol == 'easy':
-            g['ok'] = list(gnd[i]['easy'])
-            g['junk']= list(gnd[i]['hard']) + list(gnd[i]['junk'])
-        elif protocol == 'medium':
-            g['ok'] = list(gnd[i]['easy']) +  list(gnd[i]['hard'])
-            g['junk']= list(gnd[i]['junk'])
-        elif protocol == 'hard':
-            g['ok'] = list(gnd[i]['hard'])
-            g['junk']= list(gnd[i]['easy']) + list(gnd[i]['junk'])
+        pixel_seeing = torch.zeros(h_m1, w_m1)
 
-        n = min(len(g['ok']), n_samples)# + 1
+        N_m1 = soa_m1.shape[-1]
 
-        # simply plot the images
-        fig = plt.figure(dpi=400) 
-        grid = fig.add_gridspec(1, n_samples, wspace=0.1, hspace=0.1)
+        # pix_seeing_m1_array = torch.zeros(N_m1)
 
-        fig_attn = plt.figure(dpi=400) 
-        grid_attn = fig.add_gridspec(1, n_samples, wspace=0.1, hspace=0.1)
+        pos_hm1, pos_wm1 = int(((refPt[0][1] + refPt[1][1]) / 2) // 32), int(((refPt[0][0] + refPt[1][0]) / 2) // 32)
+        pos_h1, pos_w1 = ((refPt[0][1] + refPt[1][1]) / 2), ((refPt[0][0] + refPt[1][0]) / 2)
+        # pixel_seeing[pos_hm1, pos_wm1] = 1
 
-        j  = 0  
-        counter = 1
-        while j < n:
-            # for drawing top row
-            ax_img = fig.add_subplot(grid[j])
-            ax_img.set_xticks([])
-            ax_img.set_yticks([])
+        soa_m1 = soa_m1.view(1, h_m1, w_m1, -1)
+        self_soa_m1 = soa_m1[:, pos_hm1, pos_wm1, ...].view(-1, h_m1, w_m1)
+        self_soa_m1 = F.interpolate(self_soa_m1.unsqueeze(1).cpu(), size=(h, w), mode='bilinear').squeeze()
 
-            ax_img_attn = fig_attn.add_subplot(grid[j])
-            ax_img_attn.set_xticks([])
-            ax_img_attn.set_yticks([])
+        # pixel_seeing = F.interpolate(pixel_seeing.unsqueeze(0).unsqueeze(0).cpu(), size=(h, w), mode='bilinear').squeeze()
 
-            if j == 0:
-                ax_img.imshow(default_loader(qimages[i]))
-                bbx = bbxs[i]
-                qim_cropped = default_loader(qimages[i]).crop(bbx)
-                ax_img_attn.imshow(qim_cropped)
-                attn = get_attn(model_retr, qim_cropped)
-                ax_img_attn.imshow(attn, cmap='jet', alpha=.65)
+        ax.imshow(img)
+        ax.imshow(self_soa_m1.numpy(), cmap='jet', alpha=.65)
 
-                left, bot = bbx[0], bbx[1]
-                b_h, b_w = bbx[3] - bbx[1], bbx[2] - bbx[0]
+        ax.add_patch(Circle((pos_w1, pos_h1), radius=5, color='white', edgecolor='white', linewidth=5))
 
-                for spine in ax_img.spines.values():
-                    spine.set_edgecolor('black')
-                    spine.set_linewidth(1)
 
-                rect = patches.Rectangle((left, bot), b_w, b_h, fill=False, linewidth=1.5, edgecolor='y', facecolor='None')
-                ax_img.add_patch(rect)
+        # ax2.imshow(img)
+        # ax2.imshow(pixel_seeing.numpy(), cmap='gray', alpha=.85)
 
-                j += 1
-            else:
-                db_id = ranks[counter-1][i]
-                if db_id in g['junk']:
-                    counter += 1
-                    continue
+        plt.tight_layout()
 
-                edgecolor = 'red'
-                if db_id in g['ok']:
-                    edgecolor = 'green'
+    # redraw the canvas
+    fig.canvas.draw()
 
-                db_img = default_loader(images[db_id])
-                ax_img.imshow(db_img)
-                ax_img_attn.imshow(db_img)
+    # convert canvas to image
+    img_cv2 = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
+    img_cv2  = img_cv2.reshape(fig.canvas.get_width_height()[::-1] + (3,))
 
-                attn = get_attn(model_retr, db_img)
-                ax_img_attn.imshow(attn, cmap='jet', alpha=.65)
-
-                for spine in ax_img.spines.values():
-                    spine.set_edgecolor(edgecolor)
-                    spine.set_linewidth(2)
-                counter +=1 
-                j += 1
-
-        summary.add_figure('/' + protocol + '/ranks/', fig, global_step=i+1)
-        summary.add_figure('/' + protocol + '/attns/', fig_attn, global_step=i+1)
+    # img_cv2 is rgb, convert to opencv's default bgr
+    img_cv2 = cv2.cvtColor(img_cv2,cv2.COLOR_RGB2BGR)
+    
+    return img_cv2
