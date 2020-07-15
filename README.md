@@ -2,15 +2,19 @@
 
 ![teaser](assets/teaser.png)
 
-This repository contains the PyTorch implementation of our ECCV 2020 paper "SOLAR: Second-Order Loss and Attention for Image Retrieval".
+This repository contains the PyTorch implementation of our ECCV 2020 paper
 
-Before you go any further, please check out [Filip Radenovic's great repository on image retrieval.](https://github.com/filipradenovic/cnnimageretrieval-pytorch) Our `solar-global` module is heavily built upon it. If you use this code in your research, please also kindly cite their work!
+**"SOLAR: Second-Order Loss and Attention for Image Retrieval"**
+ [[arXiv](https://arxiv.org/abs/2001.08972)]
+
+Before going further, please check out [Filip Radenovic's great repository on image retrieval.](https://github.com/filipradenovic/cnnimageretrieval-pytorch) Our `solar-global` module is heavily built upon it. If you use this code in your research, please also cite their work!
+[[link to license](https://github.com/filipradenovic/cnnimageretrieval-pytorch/blob/master/LICENSE)]
 ## Features
 - [x] Complete test scripts for large-scale image retrieval with `solar-global`
 - [x] Inference code for extracting local descriptors with `solar-local`
 - [x] Second-order attention map visualisation for large images
+- [x] Image matching visualisation
 - [ ] Training code for image retrieval (***coming soon!***)
-- [ ] Image matching visualisation
 
 ## Requirements
 - Python 3
@@ -88,7 +92,8 @@ and get results as below
 
 <details>
 <summary><b> Using our interactive visualisation tool </b></summary></br>
-We provide a small demo for you to click around an image and interactively visualise the second-order attention (SOA) maps at different locations you select.
+
+We provide a small demo for you to click around an image and interactively visualise the second-order attention (SOA) maps at different locations you select. (*c.f.* Section 4.3 in the [paper](https://arxiv.org/pdf/2001.08972.pdf) for in-depth analysis)
 
 First, run
 ```
@@ -107,11 +112,11 @@ A new window titled `Second order attention` with the SOA from the closest locat
 
 ![demo](assets/demo_soa1.png)
 
-Now, try drawing a rectangle in the sky, you should see the SOA more spread-out and silhouetting the main landmarks
+Now, try drawing a rectangle in the sky, you should see the SOA more spread-out and silhouetting the main landmarks like this
 
 ![demo](assets/demo_2.png)
 
-You can keep clicking around the image to visualise more SOAs. Remember, the white dot in the SOA map tells you where the currently displayed second-order attention map is selected from!
+You can keep clicking around the image to visualise more SOAs. Remember, the white dot in the SOA map tells you where the currently displayed attention map is selected from!
 
 You can also try out different images by parsing the programme with
 ```
@@ -121,7 +126,7 @@ python3 -m demo.interactive_soa --image PATH/TO/YOUR/IMAGE
 </details>
 
 <details>
-<summary><b> Using Jupyter-Notebook </b></summary></br>
+<summary><b> Jupyter-Notebook </b></summary></br>
 
 ***Coming Soon!***
 
@@ -159,7 +164,7 @@ Descriptors shape torch.Size([512, 128])
 <details>
 <summary><b> Jupyter-Notebook </b></summary></br>
 
-***Coming Soon!***
+Follow [our demo notebook](demo/solar_local_matching.ipynb) to see a comparison between our `solar_local` and the baseline [SOSNet](https://github.com/scape-research/SOSNet) on an image-matching toy example.
 
 </details>
 
