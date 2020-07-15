@@ -1,6 +1,5 @@
 import os
 from PIL import Image, ImageFile
-import h5py
 import numpy as np
 import sys
 import subprocess

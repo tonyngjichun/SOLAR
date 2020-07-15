@@ -9,7 +9,7 @@ Before you go any further, please check out [Filip Radenovic's great repository 
 - [x] Complete test scripts for large-scale image retrieval with `solar-global`
 - [x] Inference code for extracting local descriptors with `solar-local`
 - [x] Second-order attention map visualisation for large images
-- [x] Matching performance visualisation
+- [ ] Matching performance visualisation
 - [ ] Training code for image-retrieval (**coming soon!**)
 - [ ] Training code for local descriptors
 
@@ -20,7 +20,6 @@ Before you go any further, please check out [Filip Radenovic's great repository 
 - [TensorBoard](https://www.tensorflow.org/tensorboard) tested on 2.0.0+
 - numpy
 - PIL
-- [h5py](https://pypi.org/project/h5py/)
 - [tqdm](https://github.com/tqdm/tqdm)
 
 ## Download model weights and descriptors
@@ -56,7 +55,7 @@ Retrieval results is visualised in `specs/` using
 ```
 tensorboard --logdir specs/ --samples_per_plugin images=1000
 ```
-You should be able view them on your browser at `localhost:6006`. Here's an example
+You should be able to view them on your browser at `localhost:6006`. Here's an example
 
 ![ranks](assets/ranks.png)
 </details>
@@ -71,7 +70,7 @@ python3 -m solar_global.examples.extract_1m
 
 This script would download and extract the [1M distractors set](https://github.com/filipradenovic/revisitop) and save them into `data/test/revisitop1m/`. This dataset is quite large (400GB+), so depending on your network & GPU, the whole process of downloading + extracting descriptors can take from a couple of days to a week. In our setting (~100MBps, V100), the download + extraction takes ~10 hours and the descriptors ~30 hours to be extracted.
 
-Now, make sure that `resnet101-solar-best.pth_vecs_revisitop1m.pt` is in the main directory. Then, you can run
+Now, make sure that `resnet101-solar-best.pth_vecs_revisitop1m.pt` is in the main directory. Then you can run
 
 ```
 python3 -m solar_global.examples.test_1m
@@ -90,12 +89,31 @@ and get results as below
 
 <details>
 <summary><b> Using our interactive visualisation tool </b></summary></br>
-We provide a small demo for you to click around an image and interactively visualise the second-order attention map at that location.
+We provide a small demo for you to click around an image and interactively visualise the second-order attention (SOA) map at that location.
 
 First, run
 ```
 python3 -m demo.interactive_soa
 ```
+
+This gorgeous image of the Eiffel Tower should pop up in a new window
+
+![demo](assets/demo.png)
+
+Now, try drawing a rectangle centred at the location you would like to visualise the SOA map
+
+![demo](assets/demo_click1.png)
+
+A new window titled `Second order attention` with the SOA overlayed on the image and a white dot indicating the selected location should pop up
+
+![demo](assets/demo_soa1.png)
+
+Now, trying drawing a rectangle in the sky, you should see the SOA more spread-out and silhouetting the landmarks
+
+![demo](assets/demo_2.png)
+
+You can keep click around the image to visualise more SOAs. Remember, the white dot in the SOA map is where the selected location is!
+
 </details>
 
 <details>
