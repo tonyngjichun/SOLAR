@@ -74,13 +74,17 @@ class SOLAR_LOCAL(nn.Module):
         print('SOA layers:')
         if self.soa:
             if '3' in self.soa_layers:
-                 self.soa3 = SOABlock(64, 4)
+                print("SOA_3:")
+                self.soa3 = SOABlock(64, 4)
             if '4' in self.soa_layers:
-                 self.soa4 = SOABlock(64, 4)
+                print("SOA_4:")
+                self.soa4 = SOABlock(64, 4)
             if '5' in self.soa_layers:
-                 self.soa5 = SOABlock(128, 2)
+                print("SOA_5:")
+                self.soa5 = SOABlock(128, 2)
             if '6' in self.soa_layers:
-                 self.soa6 = SOABlock(128, 2)
+                print("SOA_6:")
+                self.soa6 = SOABlock(128, 2)
 
         for layer in [self.layer1, self.layer2, self.layer3, self.layer4, self.layer5, self.layer6, self.layer7]:
             layer.apply(weights_init)

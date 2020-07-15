@@ -22,7 +22,8 @@ class SOABlock(nn.Module):
         self.out_ch = in_ch
         self.mid_ch = in_ch // k
 
-        print('Non-local Block:', self.in_ch, self.out_ch, self.mid_ch)
+        print('Num channels:    in   out   mid')
+        print('               {:>4d}  {:>4d}  {:>4d}'.format(self.in_ch, self.out_ch, self.mid_ch))
 
         self.f = nn.Sequential(
                     nn.Conv2d(self.in_ch, self.mid_ch, (1, 1), (1, 1)),

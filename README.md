@@ -4,14 +4,13 @@
 
 This repository contains the PyTorch implementation of our ECCV 2020 paper "SOLAR: Second-Order Loss and Attention for Image Retrieval".
 
-Before you go any further, please check out [Filip Radenovic's great repository on image retrieval.](https://github.com/filipradenovic/cnnimageretrieval-pytorch) Our `solar-global` module is heavily built upon it. If you use this code in your research, please also kindly cite their work(s)!
+Before you go any further, please check out [Filip Radenovic's great repository on image retrieval.](https://github.com/filipradenovic/cnnimageretrieval-pytorch) Our `solar-global` module is heavily built upon it. If you use this code in your research, please also kindly cite their work!
 ## Features
 - [x] Complete test scripts for large-scale image retrieval with `solar-global`
 - [x] Inference code for extracting local descriptors with `solar-local`
 - [x] Second-order attention map visualisation for large images
-- [ ] Matching performance visualisation
-- [ ] Training code for image-retrieval (**coming soon!**)
-- [ ] Training code for local descriptors
+- [ ] Training code for image-retrieval (***coming soon!***)
+- [ ] Image matching visualisation
 
 ## Requirements
 - Python 3
@@ -29,7 +28,7 @@ Begin with downloading our best models (both global and local) described in the 
 sh download.sh
 ```
 
-The global model is saved at `data/networks/resnet101-solar-best.pth` and the local model is save at `solar_local/weights/local-solar-345-liberty.pth`. The descriptors of the 1M distractors are saved in the main directory (the file is quite big ~8GB, so it might take a while to download).
+The global model is saved at `data/networks/resnet101-solar-best.pth` and the local model is saved at `solar_local/weights/local-solar-345-liberty.pth`. The descriptors of the 1M distractors are saved in the main directory (the file is quite big ~8GB, so it might take a while to download).
 
 ## Testing our global descriptor
 Here you can try out our pretrained model `resnet101-solar-best.pth` on the [Revisiting Oxford and Paris](https://github.com/filipradenovic/revisitop) dataset
@@ -55,7 +54,7 @@ Retrieval results is visualised in `specs/` using
 ```
 tensorboard --logdir specs/ --samples_per_plugin images=1000
 ```
-You should be able to view them on your browser at `localhost:6006`. Here's an example
+You can view them on your browser at `localhost:6006`. Here's an example
 
 ![ranks](assets/ranks.png)
 </details>
@@ -100,19 +99,24 @@ This gorgeous image of the Eiffel Tower should pop up in a new window
 
 ![demo](assets/demo.png)
 
-Now, try drawing a rectangle centred at the location you would like to visualise the SOA map
+Now, try drawing a (light green) rectangle centred at the location you would like to visualise the SOA map
 
 ![demo](assets/demo_click1.png)
 
-A new window titled `Second order attention` with the SOA overlayed on the image and a white dot indicating the selected location should pop up
+A new window titled `Second order attention` with the SOA from the cloesest location in the feature map overlayed on the image, and a white dot indicating where you've selected should appear as below 
 
 ![demo](assets/demo_soa1.png)
 
-Now, trying drawing a rectangle in the sky, you should see the SOA more spread-out and silhouetting the landmarks
+Now, try drawing a rectangle in the sky, you should see the SOA more spread-out and silhouetting the main landmarks
 
 ![demo](assets/demo_2.png)
 
-You can keep click around the image to visualise more SOAs. Remember, the white dot in the SOA map is where the selected location is!
+You can keep clicking around the image to visualise more SOAs. Remember, the white dot in the SOA map tells you where the second-order attention map is selected from!
+
+You can also try out different images by parsing the programme with
+```
+python3 -m demo.interactive_soa --image PATH/TO/YOUR/IMAGE
+```
 
 </details>
 
@@ -126,6 +130,31 @@ You can keep click around the image to visualise more SOAs. Remember, the white 
 ## Testing our local descriptor
 
 <details>
+<summary><b> Simple inference </b></summary></br>
+
+Run
+```
+python3 -m solar_local.example
+```
+
+If successful, it should display a message like this
+```
+SOA layers:
+SOA_3:
+Num channels:    in   out   mid
+                 64    64    16
+SOA_4:
+Num channels:    in   out   mid
+                 64    64    16
+SOA_5:
+Num channels:    in   out   mid
+                128   128    64
+Descriptors shape torch.Size([512, 128])
+```
+
+</details>
+
+<details>
 <summary><b> Jupyter-Notebook </b></summary></br>
 
 ***Coming Soon!***
@@ -133,7 +162,7 @@ You can keep click around the image to visualise more SOAs. Remember, the white 
 </details>
 
 ## Citation
-If you use this repository in you work, please cite our ECCV 2020 paper:
+If you use this repository in your work, please cite our ECCV 2020 paper:
 ```
 @inproceedings{solar2020eccv,
     author    = {Ng, Tony and Balntas, Vassileios and Tian, Yurun and Mikolajczyk, Krystian},

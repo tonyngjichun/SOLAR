@@ -2,7 +2,7 @@ import argparse
 import os
 
 import torch
-from models.model import SOLAR_LOCAL
+from solar_local.models.model import SOLAR_LOCAL
 
 def main(options):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
