@@ -118,9 +118,19 @@ You can keep click around the image to visualise more SOAs. Remember, the white 
 
 <details>
 <summary><b> Using Jupyter-Notebook </b></summary></br>
+
+***Coming Soon!***
+
 </details>
 
 ## Testing our local descriptor
+
+<details>
+<summary><b> Jupyter-Notebook </b></summary></br>
+
+***Coming Soon!***
+
+</details>
 
 ## Citation
 If you use this repository in you work, please cite our ECCV 2020 paper:

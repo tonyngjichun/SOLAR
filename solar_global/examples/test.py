@@ -90,7 +90,6 @@ def main():
 
     # check if test dataset are downloaded
     # and download if they are not
-   # download_distractors(get_data_root())
     download_test(get_data_root())
 
     # setting up the visible GPU
@@ -148,7 +147,6 @@ def main():
     datasets = args.datasets.split(',')
     for dataset in datasets:
         summary_ranks  = tb_setup(os.path.join('specs/ranks/', dataset, args.network))
-        summary_attns  = tb_setup(os.path.join('specs/attentions/', dataset, args.network))
         start = time.time()
 
         print('>> {}: Extracting...'.format(dataset))
@@ -178,6 +176,7 @@ def main():
         ranks = np.argsort(-scores, axis=0)
         compute_map_and_print(dataset, ranks, cfg['gnd'])
 
+        # plot retrieval rankings and save to tensorboard summary
         for protocol in ['easy', 'medium', 'hard']:
             plot_ranks(qimages, images, ranks, cfg['gnd'], bbxs, summary_ranks, dataset, 'solar-best: ', 20, protocol)
 

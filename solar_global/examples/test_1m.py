@@ -91,7 +91,6 @@ def main():
 
     # check if test dataset are downloaded
     # and download if they are not
-   # download_distractors(get_data_root())
     download_test(get_data_root())
 
     # setting up the visible GPU
@@ -164,7 +163,6 @@ def main():
         # extract database and query vectors
         print('>> {}: database images...'.format(dataset))
         vecs = extract_vectors(net, images, args.image_size, transform, ms=ms, mode='test')
-        #vecs = vecs.numpy()
 
         print('>> {}: query images...'.format(dataset))
         qvecs = extract_vectors(net, qimages, args.image_size, transform, bbxs=bbxs, ms=ms, mode='test')
@@ -175,7 +173,6 @@ def main():
         vecs_1m = torch.load(args.network + '_vecs_' + 'revisitop1m' + '.pt')
         vecs = torch.cat([vecs, vecs_1m], dim=1)
         vecs = vecs.numpy()
-
 
         # search, rank, and print
         scores = np.dot(vecs.T, qvecs)

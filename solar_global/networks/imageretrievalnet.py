@@ -112,7 +112,6 @@ class SOLAR_Global_Retrieval(nn.Module):
     def forward(self, x):
         # x -> features
         o = self.features(x)
-        fmap = o.clone()
 
         # TODO: properly test (with pre-l2norm and/or post-l2norm)
         # if lwhiten exist: features -> local whiten
@@ -325,7 +324,6 @@ def extract_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1
                     pbar.update(print_freq)
                 elif (i+1) == len(images):
                     pbar.update(len(images) % print_freq)
-
 
     return vecs
 
