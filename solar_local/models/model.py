@@ -71,7 +71,7 @@ class SOLAR_LOCAL(nn.Module):
             nn.LocalResponseNorm(2 * self.dim_desc, alpha=2 * self.dim_desc, beta=0.5, k=0)
         )
 
-        print('SOA layers:')
+        print('SOLAR_LOCAL - SOSNet w/ SOA layers:')
         if self.soa:
             if '3' in self.soa_layers:
                 print("SOA_3:")

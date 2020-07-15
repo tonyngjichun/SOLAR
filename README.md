@@ -9,7 +9,7 @@ Before you go any further, please check out [Filip Radenovic's great repository 
 - [x] Complete test scripts for large-scale image retrieval with `solar-global`
 - [x] Inference code for extracting local descriptors with `solar-local`
 - [x] Second-order attention map visualisation for large images
-- [ ] Training code for image-retrieval (***coming soon!***)
+- [ ] Training code for image retrieval (***coming soon!***)
 - [ ] Image matching visualisation
 
 ## Requirements
@@ -28,20 +28,20 @@ Begin with downloading our best models (both global and local) described in the 
 sh download.sh
 ```
 
-The global model is saved at `data/networks/resnet101-solar-best.pth` and the local model is saved at `solar_local/weights/local-solar-345-liberty.pth`. The descriptors of the 1M distractors are saved in the main directory (the file is quite big ~8GB, so it might take a while to download).
+The global model is saved at `data/networks/resnet101-solar-best.pth` and the local model at `solar_local/weights/local-solar-345-liberty.pth`. The descriptors of the 1M distractors are saved in the main directory (the file is quite big ~8GB, so it might take a while to download).
 
 ## Testing our global descriptor
 Here you can try out our pretrained model `resnet101-solar-best.pth` on the [Revisiting Oxford and Paris](https://github.com/filipradenovic/revisitop) dataset
 
 <details>
 <summary><b>Testing on R-Oxford, R-Paris</b></summary></br>
-After you've successfully downloaded the global model weights, run
+Once you've successfully downloaded the global model weights, run
 
 ```
 python3 -m solar_global.examples.test
 ```
 
-After a while, you should be able to get results like this:
+After a while, you should be able to get results as below 
 ```
 >> roxford5k: mAP E: 85.88, M: 69.9, H: 47.91
 >> roxford5k: mP@k[1, 5, 10] E: [94.12 92.45 88.8 ], M: [94.29 90.86 86.71], H: [88.57 74.29 63.  ]
@@ -50,7 +50,7 @@ After a while, you should be able to get results like this:
 >> rparis6k: mP@k[1, 5, 10] E: [100.   96.57 95.43], M: [100.   98.   97.14], H: [97.14 94.57 93.  ]
 ```
 
-Retrieval results is visualised in `specs/` using
+Retrieval rankings are visualised in `specs/` using
 ```
 tensorboard --logdir specs/ --samples_per_plugin images=1000
 ```
@@ -67,7 +67,7 @@ If you decide to extract the descriptors on your own, you could run
 python3 -m solar_global.examples.extract_1m
 ```
 
-This script would download and extract the [1M distractors set](https://github.com/filipradenovic/revisitop) and save them into `data/test/revisitop1m/`. This dataset is quite large (400GB+), so depending on your network & GPU, the whole process of downloading + extracting descriptors can take from a couple of days to a week. In our setting (~100MBps, V100), the download + extraction takes ~10 hours and the descriptors ~30 hours to be extracted.
+This script would download and extract the [1M distractors set](https://github.com/filipradenovic/revisitop) and save them into `data/test/revisitop1m/`. This dataset is quite large (400GB+), so depending on your network & GPU, the whole process of downloading + extracting descriptors can take from a couple of days to a week. In our setting (~100MBps, V100), the download + extraction takes ~10 hours and the descriptors ~30 hours to be computed.
 
 Now, make sure that `resnet101-solar-best.pth_vecs_revisitop1m.pt` is in the main directory. Then you can run
 
@@ -88,7 +88,7 @@ and get results as below
 
 <details>
 <summary><b> Using our interactive visualisation tool </b></summary></br>
-We provide a small demo for you to click around an image and interactively visualise the second-order attention (SOA) map at that location.
+We provide a small demo for you to click around an image and interactively visualise the second-order attention (SOA) maps at different locations you select.
 
 First, run
 ```
@@ -99,11 +99,11 @@ This gorgeous image of the Eiffel Tower should pop up in a new window
 
 ![demo](assets/demo.png)
 
-Now, try drawing a (light green) rectangle centred at the location you would like to visualise the SOA map
+Try drawing a (light green) rectangle centred at the location you would like to visualise the SOA map
 
 ![demo](assets/demo_click1.png)
 
-A new window titled `Second order attention` with the SOA from the cloesest location in the feature map overlayed on the image, and a white dot indicating where you've selected should appear as below 
+A new window titled `Second order attention` with the SOA from the closest location in the feature map overlaid on the image, and a white dot indicating where you've selected should appear as below
 
 ![demo](assets/demo_soa1.png)
 
@@ -111,7 +111,7 @@ Now, try drawing a rectangle in the sky, you should see the SOA more spread-out 
 
 ![demo](assets/demo_2.png)
 
-You can keep clicking around the image to visualise more SOAs. Remember, the white dot in the SOA map tells you where the second-order attention map is selected from!
+You can keep clicking around the image to visualise more SOAs. Remember, the white dot in the SOA map tells you where the currently displayed second-order attention map is selected from!
 
 You can also try out different images by parsing the programme with
 ```
@@ -132,7 +132,7 @@ python3 -m demo.interactive_soa --image PATH/TO/YOUR/IMAGE
 <details>
 <summary><b> Simple inference </b></summary></br>
 
-We provide the bare-bones inference code for the local counterpart of SOLAR (Section 5.3 in the paper), so you can plug it into whatever applications you have for local descriptors.
+We provide a bare-bones inference code for the local counterpart of SOLAR (Section 5.3 in the paper), so you can plug it into whatever applications you have for local descriptors.
 
 To check that it works, run
 ```
@@ -141,7 +141,7 @@ python3 -m solar_local.example
 
 If successful, it should display the following message
 ```
-SOA layers:
+SOLAR_LOCAL - SOSNet w/ SOA layers:
 SOA_3:
 Num channels:    in   out   mid
                  64    64    16
@@ -164,11 +164,11 @@ Descriptors shape torch.Size([512, 128])
 </details>
 
 ## Citation
-If you use this repository in your work, please cite our ECCV 2020 paper:
+If you use this repository in your work, please cite our paper:
 ```bibtex
 @inproceedings{solar2020eccv,
     author    = {Ng, Tony and Balntas, Vassileios and Tian, Yurun and Mikolajczyk, Krystian},
-    title     = {{SOLAR: Second-Order Loss and Attention for Image Retrieval}},
+    title     = {{SOLAR}: Second-Order Loss and Attention for Image Retrieval},
     booktitle = {ECCV},
     year      = {2020}
 }

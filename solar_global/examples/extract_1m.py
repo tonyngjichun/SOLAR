@@ -14,10 +14,9 @@ from torchvision import transforms
 
 from solar_global.networks.imageretrievalnet import init_network, extract_vectors
 from solar_global.datasets.testdataset import configdataset
-from solar_global.utils.download import download_train, download_test, download_distractors
+from solar_global.utils.download import download_distractors
 from solar_global.utils.evaluate import compute_map_and_print
 from solar_global.utils.general import get_data_root, htime
-from solar_global.utils.plots import plot_ranks, plot_ranks_and_attentions
 
 
 PRETRAINED = {
@@ -130,13 +129,7 @@ def main():
     # extract database and query vectors
     print('>> {}: database images...'.format(dataset))
     vecs = extract_vectors(net, images, args.image_size, transform, ms=ms, mode='test')
-    torch.save(vecs.detach().numpy(), args.network + '_vecs_' + dataset + '.pt')
-    vecs = vecs.numpy()
-
-    print('>> {}: query images...'.format(dataset))
-    qvecs = extract_vectors(net, qimages, args.image_size, transform, bbxs=bbxs, ms=ms, mode='test')
-    torch.save(qvecs.detach().numpy(), args.network +'_qvecs_' + dataset + '.pt')
-    qvecs = qvecs.numpy()
+    torch.save(vecs, args.network + '_vecs_' + dataset + '.pt')
 
     print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
 

@@ -14,10 +14,9 @@ from torchvision import transforms
 
 from solar_global.networks.imageretrievalnet import init_network, extract_vectors
 from solar_global.datasets.testdataset import configdataset
-from solar_global.utils.download import download_train, download_test, download_distractors
+from solar_global.utils.download import download_test
 from solar_global.utils.evaluate import compute_map_and_print
 from solar_global.utils.general import get_data_root, htime
-from solar_global.utils.plots import plot_ranks, plot_ranks_and_attentions
 
 
 PRETRAINED = {
