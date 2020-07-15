@@ -132,12 +132,14 @@ python3 -m demo.interactive_soa --image PATH/TO/YOUR/IMAGE
 <details>
 <summary><b> Simple inference </b></summary></br>
 
-Run
+We provide the bare-bones inference code for the local counterpart of SOLAR (Section 5.3 in the paper), so you can plug it into whatever applications you have for local descriptors.
+
+To check that it works, run
 ```
 python3 -m solar_local.example
 ```
 
-If successful, it should display a message like this
+If successful, it should display the following message
 ```
 SOA layers:
 SOA_3:
@@ -163,10 +165,10 @@ Descriptors shape torch.Size([512, 128])
 
 ## Citation
 If you use this repository in your work, please cite our ECCV 2020 paper:
-```
+```bibtex
 @inproceedings{solar2020eccv,
     author    = {Ng, Tony and Balntas, Vassileios and Tian, Yurun and Mikolajczyk, Krystian},
-    title     = {{SOLAR}: Second-Order Loss and Attention for Image Retrieval},
+    title     = {{SOLAR: Second-Order Loss and Attention for Image Retrieval}},
     booktitle = {ECCV},
     year      = {2020}
 }
