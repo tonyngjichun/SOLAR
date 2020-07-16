@@ -1,5 +1,5 @@
 import torch.nn as nn
-from .non_local_block import SOABlock 
+from .soa_block import SOABlock 
 
 eps_fea_norm = 1e-5
 eps_l2_norm = 1e-10

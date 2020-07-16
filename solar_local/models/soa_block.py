@@ -28,11 +28,11 @@ class SOABlock(nn.Module):
         self.f = nn.Sequential(
                     nn.Conv2d(self.in_ch, self.mid_ch, (1, 1), (1, 1)),
                     nn.BatchNorm2d(self.mid_ch),
-                    nn.ReLU())#, bias=False)
+                    nn.ReLU())
         self.g = nn.Sequential(
                     nn.Conv2d(self.in_ch, self.mid_ch, (1, 1), (1, 1)),
                     nn.BatchNorm2d(self.mid_ch),
-                    nn.ReLU())#, bias=False)
+                    nn.ReLU())
         self.h = nn.Conv2d(self.in_ch, self.mid_ch, (1, 1), (1, 1))
 
         self.v = nn.Conv2d(self.mid_ch, self.out_ch, (1, 1), (1, 1))

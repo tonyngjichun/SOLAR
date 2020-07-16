@@ -119,8 +119,7 @@ class SOABlock(nn.Module):
             conv.apply(weights_init)
 
         self.v.apply(constant_init)
-        
-        self.gamma = Parameter(torch.zeros(1))
+
 
     def forward(self, x):
         B, C, H, W = x.shape

@@ -1,4 +1,3 @@
-
 import argparse
 import os
 import time
@@ -24,9 +23,6 @@ from solar_global.utils.plots import draw_soa_map
 
 
 MODEL = 'data/networks/resnet101-solar-best.pth'
-IMSIZE = 1024
-
-NUM_MAPS = 20
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--image", default="assets/interactive_demo.jpg", help="Path to the image")
@@ -41,6 +37,7 @@ def nothing(x):
 refPt = []
 cropping = False
  
+
 def click_and_crop(event, x, y, flags, param):
 	# grab references to the global variables
 	global refPt, cropping
@@ -118,10 +115,9 @@ while True:
         break
  
     # if there are two reference points, then crop the region of interest
-    # from teh image and display it
+    # from the image and display it
     if len(refPt) == 2:
-        # soa = draw_attention(default_loader(args.image), model_retr)
-        # soa = cv2.applyColorMap(self_attn, cv2.COLORMAP_JET)
+        # display soa
         soa = draw_soa_map(default_loader(args.image), net, refPt)
         cv2.imshow("Second order attention", soa)
         cv2.waitKey(20)
