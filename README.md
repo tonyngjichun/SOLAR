@@ -66,12 +66,12 @@ You can view them on your browser at `localhost:6006`. Here's an example
 <details>
 <summary><b>Testing with the extra 1-million distractors</b></summary></br>
 
-If you decide to extract the descriptors on your own, you could run
+If you decide to extract the descriptors on your own, run
 ```
 python3 -m solar_global.examples.extract_1m
 ```
 
-This script would download and extract the [1M distractors set](https://github.com/filipradenovic/revisitop) and save them into `data/test/revisitop1m/`. This dataset is quite large (400GB+), so depending on your network & GPU, the whole process of downloading + extracting descriptors can take from a couple of days to a week. In our setting (~100MBps, V100), the download + extraction takes ~10 hours and the descriptors ~30 hours to be computed.
+This script would download and extract the [1M distractors set](http://ptak.felk.cvut.cz/revisitop/revisitop1m/) and save them into `data/test/revisitop1m/`. This dataset is quite large (400GB+), so depending on your network & GPU, the whole process of downloading + extracting descriptors can take from a couple of days to a week. In our setting (~100MBps, V100), the download + extraction takes ~10 hours and the descriptors ~30 hours to be computed.
 
 Now, make sure that `resnet101-solar-best.pth_vecs_revisitop1m.pt` is in the main directory. Then you can run
 
@@ -93,7 +93,7 @@ and get results as below
 <details>
 <summary><b> Using our interactive visualisation tool </b></summary></br>
 
-We provide a small demo for you to click around an image and interactively visualise the second-order attention (SOA) maps at different locations you select. (*c.f.* Section 4.3 in the [paper](https://arxiv.org/pdf/2001.08972.pdf) for in-depth analysis)
+We provide a small demo for you to click around an image and interactively visualise the second-order attention (SOA) maps at different locations you select. (*c.f.* Section 4.3 in the [paper](https://arxiv.org/pdf/2001.08972.pdf) for an in-depth analysis)
 
 First, run
 ```
@@ -164,7 +164,7 @@ Descriptors shape torch.Size([512, 128])
 <details>
 <summary><b> Jupyter-Notebook </b></summary></br>
 
-Follow [our demo notebook](demo/solar_local_matching.ipynb) to see a comparison between our `solar_local` and the baseline [SOSNet](https://github.com/scape-research/SOSNet) on an image-matching toy example.
+Follow [our demo notebook](demo/solar_local_matching.ipynb) to see a comparison between `solar_local` and the baseline [SOSNet](https://github.com/scape-research/SOSNet) on an image-matching toy example.
 
 </details>
 
