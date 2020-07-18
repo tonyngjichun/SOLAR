@@ -17,16 +17,25 @@ from solar_global.datasets.testdataset import configdataset
 from solar_global.utils.download import download_test
 from solar_global.utils.evaluate import compute_map_and_print
 from solar_global.utils.general import get_data_root, htime
-from solar_global.utils.plots import plot_ranks
+from solar_global.utils.plots import plot_ranks, plot_embeddings
 
+# some conflicts between tensorflow and tensoboard 
+# causing embeddings to not be saved properly in tb
+try:
+    import tensorflow as tf
+    import tensorboard as tb
+    tf.io.gfile = tb.compat.tensorflow_stub.io.gfile
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3
+except:
+    pass
 
 PRETRAINED = {
-    'rSfM120k-tl-resnet50-gem-w'           : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet50-gem-w-97bf910.pth',
-    'rSfM120k-tl-resnet101-gem-w'          : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet101-gem-w-a155e54.pth',
-    'rSfM120k-tl-resnet152-gem-w'          : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet152-gem-w-f39cada.pth',
-    'gl18-tl-resnet50-gem-w'                     : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet50-gem-w-83fdc30.pth',
-    'gl18-tl-resnet101-gem-w'                     : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet101-gem-w-a4d43db.pth',
-    'gl18-tl-resnet152-gem-w'                     : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet152-gem-w-21278d5.pth',
+    'rSfM120k-tl-resnet50-gem-w'  : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet50-gem-w-97bf910.pth',
+    'rSfM120k-tl-resnet101-gem-w' : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet101-gem-w-a155e54.pth',
+    'rSfM120k-tl-resnet152-gem-w' : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet152-gem-w-f39cada.pth',
+    'gl18-tl-resnet50-gem-w'      : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet50-gem-w-83fdc30.pth',
+    'gl18-tl-resnet101-gem-w'     : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet101-gem-w-a4d43db.pth',
+    'gl18-tl-resnet152-gem-w'     : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet152-gem-w-21278d5.pth',
 }
 
 datasets_names = ['oxford5k', 'paris6k', 'roxford5k', 'rparis6k', 'revisitop1m']
@@ -147,8 +156,10 @@ def main():
     datasets = args.datasets.split(',')
     for dataset in datasets:
         summary_ranks  = tb_setup(os.path.join('specs/ranks/', dataset, args.network))
+        summary_embeddings = tb_setup(os.path.join('specs/embeddings/', dataset, args.network))
         start = time.time()
 
+        print('')
         print('>> {}: Extracting...'.format(dataset))
 
         # prepare config structure for the test dataset
@@ -176,10 +187,18 @@ def main():
         ranks = np.argsort(-scores, axis=0)
         compute_map_and_print(dataset, ranks, cfg['gnd'])
 
+        print('')
+
         # plot retrieval rankings and save to tensorboard summary
         for protocol in ['easy', 'medium', 'hard']:
             plot_ranks(qimages, images, ranks, cfg['gnd'], bbxs, summary_ranks, dataset, 'solar-best: ', 20, protocol)
 
+        print('')
+
+        # plot embeddings for cluster visualisation in tensorboard/projector
+        plot_embeddings(images, vecs, summary_embeddings, imsize=64, sample_freq=1)
+
+        print('')
         print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
 
 

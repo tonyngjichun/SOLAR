@@ -24,15 +24,15 @@ FEATURES = {
 }
 
 PRETRAINED = {
-    'SfM120k-vgg16-gem'           : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/retrievalSfM120k-vgg16-gem-b4dcdc6.pth',
-    'SfM120k-resnet101-gem'       : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/retrievalSfM120k-resnet101-gem-b80fb85.pth',
+    'SfM120k-vgg16-gem'     : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/retrievalSfM120k-vgg16-gem-b4dcdc6.pth',
+    'SfM120k-resnet101-gem' : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/retrievalSfM120k-resnet101-gem-b80fb85.pth',
     # new networks with whitening learned end-to-end
-    'SfM120k-tl-resnet50-gem-w'           : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet50-gem-w-97bf910.pth',
-    'SfM120k-tl-resnet101-gem-w'          : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet101-gem-w-a155e54.pth',
-    'SfM120k-tl-resnet152-gem-w'          : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet152-gem-w-f39cada.pth',
-    'gl18-tl-resnet50-gem-w'               : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet50-gem-w-83fdc30.pth',
-    'gl18-tl-resnet101-gem-w'              : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet101-gem-w-a4d43db.pth',
-    'gl18-tl-resnet152-gem-w'              : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet152-gem-w-21278d5.pth'
+    'SfM120k-tl-resnet50-gem-w'  : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet50-gem-w-97bf910.pth',
+    'SfM120k-tl-resnet101-gem-w' : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet101-gem-w-a155e54.pth',
+    'SfM120k-tl-resnet152-gem-w' : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet152-gem-w-f39cada.pth',
+    'gl18-tl-resnet50-gem-w'     : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet50-gem-w-83fdc30.pth',
+    'gl18-tl-resnet101-gem-w'    : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet101-gem-w-a4d43db.pth',
+    'gl18-tl-resnet152-gem-w'    : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet152-gem-w-21278d5.pth'
 }
 
 ####################################################################################################
@@ -121,7 +121,7 @@ class SOABlock(nn.Module):
         self.v.apply(constant_init)
 
 
-    def forward(self, x):
+    def forward(self, x, vis_mode=False):
         B, C, H, W = x.shape
 
         f_x = self.f(x).view(B, self.mid_ch, H * W) # B * mid_ch * N, where N = H*W
@@ -130,9 +130,12 @@ class SOABlock(nn.Module):
 
         z = torch.bmm(f_x.permute(0, 2, 1), g_x) # B * N * N, where N = H*W
 
-        # for visualisation only
-        attn = self.softmax((self.mid_ch ** -.75) * z)
-        
+        if vis_mode:
+            # for visualisation only
+            attn = self.softmax((self.mid_ch ** -.75) * z)
+        else:
+            attn = self.softmax((self.mid_ch ** -.50) * z)
+
         z = torch.bmm(attn, h_x.permute(0, 2, 1)) # B * N * mid_ch, where N = H*W
         z = z.permute(0, 2, 1).view(B, self.mid_ch, H, W) # B * mid_ch * H * W
 
@@ -182,23 +185,20 @@ class ResNetSOAs(nn.Module):
         self.mode = mode
 
     def forward(self, x):
-        attn_m2 = torch.zeros(1).to(x.device)
-        attn_m1 = torch.zeros(1).to(x.device)
-
         with torch.no_grad():
             x = self.conv1(x)
             x = self.conv2_x(x)
             x = self.conv3_x(x)
         
-            # start SOA blocks
             x = self.conv4_x(x)
 
+        # start SOA blocks
         if '4' in self.soa_layers:
-            x, soa_m2 = self.soa4(x)
+            x, soa_m2 = self.soa4(x, self.mode == 'draw')
         
         x = self.conv5_x(x)
         if '5' in self.soa_layers:
-            x, soa_m1 = self.soa5(x)
+            x, soa_m1 = self.soa5(x, self.mode == 'draw')
 
         if self.mode == 'draw':
             return x, soa_m2, soa_m1

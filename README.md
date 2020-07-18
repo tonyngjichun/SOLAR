@@ -58,9 +58,13 @@ Retrieval rankings are visualised in `specs/` using
 ```
 tensorboard --logdir specs/ --samples_per_plugin images=1000
 ```
-You can view them on your browser at `localhost:6006`. Here's an example
+You can view them on your browser at `localhost:6006` in the `IMAGES` tab. Here's an example
 
 ![ranks](assets/ranks.png)
+
+You can also switch to the `PROJECTOR` tab and play around with TensorBoard's embedding visualisation tool. Here's an example of the 6322 database images in R-Paris, visualised with [t-SNE](https://lvdmaaten.github.io/tsne/)
+
+![embeddings](assets/tsne.png)
 </details>
 
 <details>
@@ -171,7 +175,7 @@ Follow [our demo notebook](demo/solar_local_matching.ipynb) to see a comparison 
 ## Citation
 If you use this repository in your work, please cite our paper:
 ```bibtex
-@inproceedings{solar2020eccv,
+@inproceedings{ng2020solar,
     author    = {Ng, Tony and Balntas, Vassileios and Tian, Yurun and Mikolajczyk, Krystian},
     title     = {{SOLAR}: Second-Order Loss and Attention for Image Retrieval},
     booktitle = {ECCV},

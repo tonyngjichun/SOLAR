@@ -81,6 +81,29 @@ def plot_ranks(qimages, images, ranks, gnd, bbxs, summary, dataset, epoch=1, n_s
         summary.add_figure('/' + dataset + '/' + protocol + '/' + str(epoch), fig, global_step=i+1)
 
 
+def plot_embeddings(images, vecs, summary, imsize=64, sample_freq=1):
+    print("Creating embedding visualisation")
+    transform = transforms.Compose([
+                                transforms.Resize(size=imsize),
+                                transforms.CenterCrop(size=imsize),
+                                transforms.ToTensor(),
+                            ])
+
+    vecs = torch.from_numpy(vecs).permute(1,0)
+    _ids = list(range(0, len(images), sample_freq))
+    vecs = vecs[_ids]
+    label_img = [] 
+
+    for _id in tqdm(_ids):
+        label_img.append(transform(default_loader(images[_id])))
+
+    label_img = torch.stack(label_img)
+
+    summary.add_embedding(vecs, label_img=label_img, tag='database')
+
+    
+
+
 def draw_soa_map(img, model_retr, refPt):
 
     normalize = transforms.Normalize(mean=model_retr.meta['mean'], std=model_retr.meta['std'])
