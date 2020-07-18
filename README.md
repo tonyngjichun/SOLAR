@@ -70,14 +70,16 @@ You can also switch to the `PROJECTOR` tab and play around with TensorBoard's em
 <details>
 <summary><b>Testing with the extra 1-million distractors</b></summary></br>
 
-If you decide to extract the descriptors on your own, run
+If you decide to extract the descriptors on your own, run 
+
+(**Note: this step takes a lot of time and storage, and we only provide it for verification. You can skip to the next command if you've already downloded the pre-computed descriptors from the previous step!**)
 ```
 python3 -m solar_global.examples.extract_1m
 ```
 
 This script would download and extract the [1M distractors set](http://ptak.felk.cvut.cz/revisitop/revisitop1m/) and save them into `data/test/revisitop1m/`. This dataset is quite large (400GB+), so depending on your network & GPU, the whole process of downloading + extracting descriptors can take from a couple of days to a week. In our setting (~100MBps, V100), the download + extraction takes ~10 hours and the descriptors ~30 hours to be computed.
 
-Now, make sure that `resnet101-solar-best.pth_vecs_revisitop1m.pt` is in the main directory. Then you can run
+Now, make sure that `resnet101-solar-best.pth_vecs_revisitop1m.pt` is in the main directory, whether from the extraction step above or from the download ealier. Then you can run
 
 ```
 python3 -m solar_global.examples.test_1m
