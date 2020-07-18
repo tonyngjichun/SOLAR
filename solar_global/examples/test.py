@@ -22,10 +22,10 @@ from solar_global.utils.plots import plot_ranks, plot_embeddings
 # some conflicts between tensorflow and tensoboard 
 # causing embeddings to not be saved properly in tb
 try:
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     import tensorflow as tf
     import tensorboard as tb
     tf.io.gfile = tb.compat.tensorflow_stub.io.gfile
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 except:
     pass
 
