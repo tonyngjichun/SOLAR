@@ -62,7 +62,7 @@ You can view them on your browser at `localhost:6006` in the `IMAGES` tab. Here'
 
 ![ranks](assets/ranks.png)
 
-You can also switch to the `PROJECTOR` tab and play around with TensorBoard's embedding visualisation tool. Here's an example of the 6322 database images in R-Paris, visualised with [t-SNE](https://lvdmaaten.github.io/tsne/)
+You can also switch to the `PROJECTOR` tab and play around with [TensorBoard's embedding visualisation tool](https://www.tensorflow.org/tensorboard/tensorboard_projector_plugin). Here's an example of the 6322 database images in R-Paris, visualised with [t-SNE](https://lvdmaaten.github.io/tsne/)
 
 ![embeddings](assets/tsne.png)
 </details>
