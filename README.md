@@ -45,6 +45,7 @@ Once you've successfully downloaded the global model weights, run
 python3 -m solar_global.examples.test
 ```
 
+This script automatically downloads [`roxford5k,rparis6k`](http://cmp.felk.cvut.cz/revisitop/data/datasets/) into `data/test/` and evaluates SOLAR on them.
 After a while, you should be able to get results as below 
 ```
 >> roxford5k: mAP E: 85.88, M: 69.9, H: 47.91

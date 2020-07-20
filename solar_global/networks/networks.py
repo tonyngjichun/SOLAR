@@ -181,26 +181,23 @@ class ResNetSOAs(nn.Module):
             print("SOA_5:")
             self.soa5 = SOABlock(in_ch=last_feat_in, k=2)
 
-        # switch for visualisation attention
-        self.mode = mode
 
-    def forward(self, x):
+    def forward(self, x, mode='test'):
         with torch.no_grad():
             x = self.conv1(x)
             x = self.conv2_x(x)
             x = self.conv3_x(x)
-        
             x = self.conv4_x(x)
 
         # start SOA blocks
         if '4' in self.soa_layers:
-            x, soa_m2 = self.soa4(x, self.mode == 'draw')
+            x, soa_m2 = self.soa4(x, mode == 'draw')
         
         x = self.conv5_x(x)
         if '5' in self.soa_layers:
-            x, soa_m1 = self.soa5(x, self.mode == 'draw')
+            x, soa_m1 = self.soa5(x, mode == 'draw')
 
-        if self.mode == 'draw':
+        if mode == 'draw':
             return x, soa_m2, soa_m1
 
         return x

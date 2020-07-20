@@ -19,10 +19,11 @@ import torch.nn.functional as F
 
 from solar_global.networks.imageretrievalnet import init_network
 from solar_global.datasets.datahelpers import default_loader 
+from solar_global.utils.networks import load_network
 from solar_global.utils.plots import draw_soa_map
 
 
-MODEL = 'data/networks/resnet101-solar-best.pth'
+MODEL = 'resnet101-solar-best.pth'
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--image", default="assets/interactive_demo.jpg", help="Path to the image")
@@ -60,36 +61,16 @@ def click_and_crop(event, x, y, flags, param):
 		cv2.rectangle(image, refPt[0], refPt[1], (0, 255, 0), 2)
 		cv2.imshow("image", image)
 
+
 # loading network
-# pretrained networks (downloaded automatically)
-print(">> Loading network:\n>>>> '{}'".format(MODEL))
-state = torch.load(MODEL)
-
-# parsing net params from meta
-# architecture, pooling, mean, std required
-# the rest has default values, in case that is doesnt exist
-net_params = {}
-net_params['architecture'] = state['meta']['architecture']
-net_params['pooling'] = state['meta']['pooling']
-net_params['local_whitening'] = state['meta'].get('local_whitening', False)
-net_params['regional'] = state['meta'].get('regional', False)
-net_params['whitening'] = state['meta'].get('whitening', False)
-net_params['mean'] = state['meta']['mean']
-net_params['std'] = state['meta']['std']
-net_params['pretrained'] = False
-net_params['pretrained_type'] = None
-net_params['mode'] = 'draw'
-net_params['soa'] = state['meta']['soa'] 
-net_params['soa_layers'] = state['meta']['soa_layers']
-net = init_network(net_params) 
-net.load_state_dict(state['state_dict'])
-
+net = load_network(network_name=MODEL)
 
 print(">>>> loaded network: ")
 print(net.meta_repr())
 
-
-net = net.cuda() 
+# moving network to gpu and eval mode
+net.cuda() 
+net.eval() 
 
 # load the image, clone it, and setup the mouse callback function
 image = cv2.imread(args.image)

@@ -111,7 +111,7 @@ class SOLAR_Global_Retrieval(nn.Module):
 
     def forward(self, x):
         # x -> features
-        o = self.features(x)
+        o = self.features(x, self.mode)
 
         # TODO: properly test (with pre-l2norm and/or post-l2norm)
         # if lwhiten exist: features -> local whiten

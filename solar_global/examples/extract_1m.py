@@ -1,9 +1,11 @@
 import argparse
 import fnmatch
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import pickle
 import time
 import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 
 import numpy as np
 
@@ -17,24 +19,13 @@ from solar_global.datasets.testdataset import configdataset
 from solar_global.utils.download import download_distractors
 from solar_global.utils.evaluate import compute_map_and_print
 from solar_global.utils.general import get_data_root, htime
+from solar_global.utils.networks import load_network
 
-
-PRETRAINED = {
-    'rSfM120k-tl-resnet50-gem-w'  : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet50-gem-w-97bf910.pth',
-    'rSfM120k-tl-resnet101-gem-w' : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet101-gem-w-a155e54.pth',
-    'rSfM120k-tl-resnet152-gem-w' : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/retrieval-SfM-120k/rSfM120k-tl-resnet152-gem-w-f39cada.pth',
-    'gl18-tl-resnet50-gem-w'      : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet50-gem-w-83fdc30.pth',
-    'gl18-tl-resnet101-gem-w'     : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet101-gem-w-a4d43db.pth',
-    'gl18-tl-resnet152-gem-w'     : 'http://cmp.felk.cvut.cz/cnnimageretrieval/data/networks/gl18/gl18-tl-resnet152-gem-w-21278d5.pth',
-}
-
-whitening_names = ['retrieval-SfM-30k', 'retrieval-SfM-120k']
 
 # options
 parser = argparse.ArgumentParser(description='Example Script for extracting and saving descriptors for R-1M disctractors')
 parser.add_argument('--network', '-n', metavar='NETWORK', default='resnet101-solar-best.pth', 
-                    help="network to be evaluated: " +
-                        " | ".join(PRETRAINED.keys()))
+                    help="network to be evaluated. ")
 parser.add_argument('--image-size', '-imsize', dest='image_size', default=1024, type=int, metavar='N',
                     help="maximum size of longer image side used for testing (default: 1024)")
 parser.add_argument('--multiscale', '-ms', metavar='MULTISCALE', default='[1, 2**(1/2), 1/2**(1/2)]',
@@ -49,9 +40,6 @@ parser.add_argument('--soa-layers', type=str, default='45',
 parser.add_argument('--gpu-id', '-g', default='0', metavar='N',
                     help="gpu id used for testing (default: '0')")
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-warnings.filterwarnings("ignore", category=UserWarning)
-
 
 def main():
     args = parser.parse_args()
@@ -64,29 +52,7 @@ def main():
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
 
     # loading network
-    # pretrained networks (downloaded automatically)
-    print(">> Loading network:\n>>>> '{}'".format(args.network))
-    state = torch.load(os.path.join(get_data_root(), 'networks', args.network))
-
-    # parsing net params from meta
-    # architecture, pooling, mean, std required
-    # the rest has default values, in case that is doesnt exist
-    net_params = {}
-    net_params['architecture'] = state['meta']['architecture']
-    net_params['pooling'] = state['meta']['pooling']
-    net_params['local_whitening'] = state['meta'].get('local_whitening', False)
-    net_params['regional'] = state['meta'].get('regional', False)
-    net_params['whitening'] = state['meta'].get('whitening', False)
-    net_params['mean'] = state['meta']['mean']
-    net_params['std'] = state['meta']['std']
-    net_params['pretrained'] = False
-    net_params['pretrained_type'] = None
-    net_params['mode'] = 'test'
-    net_params['soa'] = state['meta']['soa'] 
-    net_params['soa_layers'] = state['meta']['soa_layers']
-    net = init_network(net_params) 
-    net.load_state_dict(state['state_dict'])
-
+    net = load_network(network_name=args.network)
     net.mode = 'test'
 
     print(">>>> loaded network: ")

@@ -126,7 +126,7 @@ def draw_soa_map(img, model_retr, refPt):
     h, w = img_tensor.shape[-2:]
 
     with torch.no_grad():
-        v_temp, _, soa_m1 = model_retr.features(img_tensor)
+        v_temp, _, soa_m1 = model_retr.features(img_tensor, mode='draw')
         
         h_m1, w_m1 = v_temp.shape[-2:]
 
