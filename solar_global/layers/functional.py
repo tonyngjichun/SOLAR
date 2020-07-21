@@ -184,4 +184,4 @@ def sos_loss(x, label):
     dist_an = torch.sum(torch.pow(xa - xn, 2), dim=0)
     dist_pn = torch.sum(torch.pow(xp - xn, 2), dim=0)
 
-    return torch.sum(torch.pow(dist_an - dist_pn, 2)) ** 0.5
+    return torch.sum(torch.pow(dist_an - dist_pn, 2) ** 0.5)
