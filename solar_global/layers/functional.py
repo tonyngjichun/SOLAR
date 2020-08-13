@@ -168,8 +168,7 @@ def triplet_loss(x, label, margin=0.1):
     dist_pos = torch.sum(torch.pow(xa - xp, 2), dim=0)
     dist_neg = torch.sum(torch.pow(xa - xn, 2), dim=0)
 
-    return torch.sum(torch.clamp(dist_pos - dist_neg + margin, min=0))
-
+    return torch.sum(torch.clamp(dist_pos - dist_neg + margin, min=0)) / nq
 
 def sos_loss(x, label):
     # x is D x N
@@ -184,4 +183,7 @@ def sos_loss(x, label):
     dist_an = torch.sum(torch.pow(xa - xn, 2), dim=0)
     dist_pn = torch.sum(torch.pow(xp - xn, 2), dim=0)
 
-    return torch.sum(torch.pow(dist_an - dist_pn, 2) ** 0.5)
+    return torch.sum(torch.pow(dist_an - dist_pn, 2)) ** 0.5 / nq
+
+
+

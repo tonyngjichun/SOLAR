@@ -117,6 +117,7 @@ class SOABlock(nn.Module):
 
         for conv in [self.f, self.g, self.h]:    #, self.v]:
             conv.apply(weights_init)
+            #conv.apply(constant_init)
 
         self.v.apply(constant_init)
 
@@ -180,6 +181,13 @@ class ResNetSOAs(nn.Module):
         if '5' in self.soa_layers:
             print("SOA_5:")
             self.soa5 = SOABlock(in_ch=last_feat_in, k=2)
+
+####        if '4' in self.soa_layers:
+####            print("SOA_4:")
+####            self.soa4 = SOABlock(in_ch=last_feat_in // 2, k=8)
+####        if '5' in self.soa_layers:
+####            print("SOA_5:")
+####            self.soa5 = SOABlock(in_ch=last_feat_in, k=8)
 
 
     def forward(self, x, mode='test'):

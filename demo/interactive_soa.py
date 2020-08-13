@@ -24,6 +24,7 @@ from solar_global.utils.plots import draw_soa_map
 
 
 MODEL = 'resnet101-solar-best.pth'
+IMSIZE = 1024
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--image", default="assets/interactive_demo.jpg", help="Path to the image")
@@ -74,6 +75,12 @@ net.eval()
 
 # load the image, clone it, and setup the mouse callback function
 image = cv2.imread(args.image)
+h, w = image.shape[0], image.shape[1]
+if (h <= w):
+    resize = (int(w * IMSIZE/h), IMSIZE)
+else:
+    resize = (IMSIZE, int(h * IMSIZE/w))
+image = cv2.resize(image, resize)
 clone = image.copy()
 cv2.namedWindow("image")
 cv2.setMouseCallback("image", click_and_crop)

@@ -1,11 +1,12 @@
 # SOLAR: Second-Order Loss and Attention for Image Retrieval
+![teaser_gif](assets/teaser.gif)
+
+This repository contains the PyTorch implementation of our paper:
+
+**"SOLAR: Second-Order Loss and Attention for Image Retrieval"**   
+Tony Ng, Vassileios Balntas, Yurun Tian, Krystian Mikolajczyk, ECCV 2020. [[arXiv](https://arxiv.org/abs/2001.08972)]
 
 ![teaser](assets/teaser.png)
-
-This repository contains the PyTorch implementation of our ECCV 2020 paper
-
-**"SOLAR: Second-Order Loss and Attention for Image Retrieval"**
- [[arXiv](https://arxiv.org/abs/2001.08972)]
 
 Before going further, please check out [Filip Radenovic's great repository on image retrieval.](https://github.com/filipradenovic/cnnimageretrieval-pytorch) Our `solar-global` module is heavily built upon it. If you use this code in your research, please also cite their work!
 [[link to license](https://github.com/filipradenovic/cnnimageretrieval-pytorch/blob/master/LICENSE)]

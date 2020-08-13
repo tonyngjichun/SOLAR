@@ -297,7 +297,7 @@ def init_network(params):
 
     return net
 
-def extract_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1, print_freq=10, summary=None, mode='train'):
+def extract_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1, print_freq=10, summary=None, mode='test'):
     # moving network to gpu and eval mode
     net.cuda()
     net.eval()

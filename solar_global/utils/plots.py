@@ -104,9 +104,10 @@ def plot_embeddings(images, vecs, summary, imsize=64, sample_freq=1):
     
 
 
-def draw_soa_map(img, model_retr, refPt):
+def draw_soa_map(img, model_retr, refPt, IMSIZE=1024):
 
     normalize = transforms.Normalize(mean=model_retr.meta['mean'], std=model_retr.meta['std'])
+    img = transforms.Resize(IMSIZE)(img)
     transform = transforms.Compose([
             transforms.ToTensor(),
             normalize,
@@ -117,11 +118,8 @@ def draw_soa_map(img, model_retr, refPt):
 
     fig = plt.figure(dpi=200)
     ax = fig.add_subplot(111)
-    # ax2 = fig.add_subplot(121)
     ax.set_xticks([])
     ax.set_yticks([])
-    # ax2.set_xticks([])
-    # ax2.set_yticks([])
 
     h, w = img_tensor.shape[-2:]
 
@@ -130,30 +128,17 @@ def draw_soa_map(img, model_retr, refPt):
         
         h_m1, w_m1 = v_temp.shape[-2:]
 
-        pixel_seeing = torch.zeros(h_m1, w_m1)
-
-        N_m1 = soa_m1.shape[-1]
-
-        # pix_seeing_m1_array = torch.zeros(N_m1)
-
         pos_hm1, pos_wm1 = int(((refPt[0][1] + refPt[1][1]) / 2) // 32), int(((refPt[0][0] + refPt[1][0]) / 2) // 32)
         pos_h1, pos_w1 = ((refPt[0][1] + refPt[1][1]) / 2), ((refPt[0][0] + refPt[1][0]) / 2)
-        # pixel_seeing[pos_hm1, pos_wm1] = 1
 
         soa_m1 = soa_m1.view(1, h_m1, w_m1, -1)
         self_soa_m1 = soa_m1[:, pos_hm1, pos_wm1, ...].view(-1, h_m1, w_m1)
         self_soa_m1 = F.interpolate(self_soa_m1.unsqueeze(1).cpu(), size=(h, w), mode='bilinear').squeeze()
 
-        # pixel_seeing = F.interpolate(pixel_seeing.unsqueeze(0).unsqueeze(0).cpu(), size=(h, w), mode='bilinear').squeeze()
-
         ax.imshow(img)
         ax.imshow(self_soa_m1.numpy(), cmap='jet', alpha=.65)
 
         ax.add_patch(Circle((pos_w1, pos_h1), radius=5, color='white', edgecolor='white', linewidth=5))
-
-
-        # ax2.imshow(img)
-        # ax2.imshow(pixel_seeing.numpy(), cmap='gray', alpha=.85)
 
         plt.tight_layout()
 
@@ -168,3 +153,36 @@ def draw_soa_map(img, model_retr, refPt):
     img_cv2 = cv2.cvtColor(img_cv2,cv2.COLOR_RGB2BGR)
     
     return img_cv2
+
+
+def plot_examples(img, summary, mode, step):
+    h, w = img.shape[-2:]
+    fig = plt.figure(dpi=200)
+
+    ax_img_q = fig.add_subplot(221)
+    ax_img_p = fig.add_subplot(222)
+    ax_img_n1 = fig.add_subplot(223)
+    ax_img_n2 = fig.add_subplot(224)
+
+    img_q_plt = img[0].detach().cpu().squeeze_().permute(1,2,0) 
+    ax_img_q.imshow(img_q_plt)
+
+    img_p_plt = img[1].detach().cpu().squeeze_().permute(1,2,0) 
+    ax_img_p.imshow(img_p_plt)
+    
+    img_n1_plt = img[2].detach().cpu().squeeze_().permute(1,2,0) 
+    ax_img_n1.imshow(img_n1_plt)
+
+    img_n2_plt = img[3].detach().cpu().squeeze_().permute(1,2,0) 
+    ax_img_n2.imshow(img_n2_plt)
+
+    for ax in [ax_img_q, ax_img_p, ax_img_n1, ax_img_n2]:
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+    ax_img_q.set_title('Query')
+    ax_img_p.set_title('Positive')
+    ax_img_n1.set_title('Negative')
+    ax_img_n2.set_title('Negative')
+
+    summary.add_figure(mode + '/examples/', fig, global_step=step)

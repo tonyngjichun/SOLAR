@@ -111,7 +111,7 @@ def compute_map(ranks, gnd, kappas=[]):
     return map, aps, pr, prs
 
 
-def compute_map_and_print(dataset, ranks, gnd, kappas=[1, 5, 10]):
+def compute_map_and_print(dataset, ranks, gnd, kappas=[1, 5, 10], summary=None, epoch=1):
     
     # old evaluation protocol
     if dataset.startswith('oxford5k') or dataset.startswith('paris6k'):
@@ -147,3 +147,9 @@ def compute_map_and_print(dataset, ranks, gnd, kappas=[1, 5, 10]):
 
         print('>> {}: mAP E: {}, M: {}, H: {}'.format(dataset, np.around(mapE*100, decimals=2), np.around(mapM*100, decimals=2), np.around(mapH*100, decimals=2)))
         print('>> {}: mP@k{} E: {}, M: {}, H: {}'.format(dataset, kappas, np.around(mprE*100, decimals=2), np.around(mprM*100, decimals=2), np.around(mprH*100, decimals=2)))
+
+        ## add text results to tensorboard if in training
+        if summary is not None:
+            summary.add_text('/' + dataset, 'Epoch {}: Dataset: {}: mAP E: {}, M: {}, H: {}'.format(epoch, dataset, np.around(mapE*100, decimals=2), np.around(mapM*100, decimals=2), np.around(mapH*100, decimals=2)), global_step=epoch) 
+            summary.add_text('/' + dataset, 'Epoch {}: Dataset: {}: mP@k{} E: {}, M: {}, H: {}'.format(epoch, dataset, kappas, np.around(mprE*100, decimals=2), np.around(mprM*100, decimals=2), np.around(mprH*100, decimals=2)), global_step=epoch)
+
