@@ -15,7 +15,7 @@ Before going further, please check out [Filip Radenovic's great repository on im
 - [x] Inference code for extracting local descriptors with `solar-local`
 - [x] Second-order attention map visualisation for large images
 - [x] Image matching visualisation
-- [ ] Training code for image retrieval (***coming soon!***)
+- [ ] Training code for image retrieval (***Work in progress***)
 
 ## Requirements
 - Python 3
@@ -173,6 +173,30 @@ Descriptors shape torch.Size([512, 128])
 <summary><b> Jupyter-Notebook </b></summary></br>
 
 Follow [our demo notebook](demo/solar_local_matching.ipynb) to see a comparison between `solar_local` and the baseline [SOSNet](https://github.com/scape-research/SOSNet) on an image-matching toy example.
+
+</details>
+
+
+## Training SOLAR
+This is currently still a sneak peak of the training, as the [GL18 dataset](https://www.kaggle.com/google/google-landmarks-dataset) consists of only links and many of them are no longer available, we are still trying to upload the images we used to the cloud to allow the public to retrain the model. We hope to have the complete training code including the download links and pre-processing code by the end of the ECCV week.
+
+<details>
+<summary><b>Pre-processing the training set</b></summary></br>
+
+***Coming Soon!***
+
+</details>
+
+<details>
+<summary><b>Training</b></summary></br>
+
+Once the dataset is downloaded and pre-processed, start the training loops with the settings decribed in the paper by running
+
+```
+python3 -m solar_global.examples.train specs/gl18 --training-dataset 'gl18' --test-datasets 'roxford5k,rparis6k' --arch 'resnet101' --pool 'gem' --p 3 --loss 'triplet' --pretrained-type 'gl18' --loss-margin 1.25 --optimizer 'adam' --lr 1e-6 -ld 1e-2 --neg-num 5 --query-size 2000 --pool-size 20000 --batch-size 8 --image-size 1024 --update-every 1 --whitening --soa --soa-layers '45' --sos --lambda 10 --no-val --print-freq 10 --flatten-desc
+```
+
+A more complete documentation of the options would be released with the rest of the data pre-processing code.
 
 </details>
 
