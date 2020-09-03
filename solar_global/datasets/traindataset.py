@@ -55,13 +55,11 @@ class TuplesBatchedDataset(data.Dataset):
             self.images = [cid2filename(db['cids'][i], ims_root) for i in range(len(db['cids']))]
 
         elif name.startswith('gl'):
-            ## TODO: NOT IMPLEMENTED YET PROPOERLY (WITH AUTOMATIC DOWNLOAD)
-
             # setting up paths
             data_root = get_data_root()
             db_root = os.path.join(data_root, 'train', name)
 
-            self.ims_root = os.path.join('/media/ssd/datasets/gl18', 'train')
+            self.ims_root = os.path.join(db_root, 'jpg')
 
             # loading db
             db_fn = os.path.join(db_root, 'db_{}.pkl'.format(name))
@@ -70,8 +68,6 @@ class TuplesBatchedDataset(data.Dataset):
 
             # setting fullpath for images
             self.images = [os.path.join(self.ims_root, db['cids'][i]+'.jpg') for i in range(len(db['cids']))]
-
-            self.pfns = db['pidxs']
 
         else:
             raise(RuntimeError("Unknown dataset name!"))
@@ -125,22 +121,10 @@ class TuplesBatchedDataset(data.Dataset):
         output = []
         output_tensor = torch.empty(0, 3, self.imsize, self.imsize)
         # query image
-        #if self.bbxs[self.qidxs[index]] is not None:
-        #   output.append(self.loader(self.images[self.qidxs[index]]).crop(self.bbxs[self.qidxs[index]]))
-        #else:
         output.append(self.loader(self.images[self.qidxs[index]]))
 
         # positive image
-        #try:
-        #   if self.bbxs[self.pidxs[index]] is not None:
-        #       output.append(self.loader(self.images[self.pidxs[index]]).crop(self.bbxs[self.pidxs[index]]))
-        #   else:
-        #       output.append(self.loader(self.images[self.pidxs[index]]))
-        #except:
-        ## try:
         output.append(self.loader(self.images[self.pidxs[index]]))
-        ## except:
-        ##output.append(self.loader(os.path.join(self.ims_root, self.pidxs[index] + '.jpg')))
 
         # negative images
         for i in range(len(self.nidxs[index])):
@@ -154,16 +138,12 @@ class TuplesBatchedDataset(data.Dataset):
         if self.transform is not None:
             for i in range(len(output)):
                 output_tensor = torch.cat([output_tensor, self.transform(output[i]).unsqueeze_(0)], dim=0)
-#           output = [self.transform(output[i]).unsqueeze_(0) for i in range(len(output))]
 
         target = torch.Tensor([-1, 1] + [0]*len(self.nidxs[index]))
 
         return output_tensor, target
 
     def __len__(self):
-        # if not self.qidxs:
-        #        return 0
-        # return len(self.qidxs)
         return self.qsize
 
     def __repr__(self):
@@ -191,7 +171,6 @@ class TuplesBatchedDataset(data.Dataset):
         # draw qsize random queries for tuples
         idxs2qpool = torch.randperm(len(self.qpool))[:self.qsize]
         self.qidxs = [self.qpool[i] for i in idxs2qpool]
-        ####self.pidxs = [self.pfns[i] for i in idxs2qpool]
         self.pidxs = []
         for idx in idxs2qpool:
             self.pidxs += random.sample(self.ppool[idx], 1)

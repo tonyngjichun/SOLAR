@@ -53,12 +53,12 @@ parser = argparse.ArgumentParser(description='PyTorch CNN Image Retrieval Traini
 # export directory, training and val datasets, test datasets
 parser.add_argument('directory', metavar='EXPORT_DIR',
                     help='destination where trained network should be saved')
-parser.add_argument('--training-dataset', '-d', metavar='DATASET', default='retrieval-SfM-120k', choices=training_dataset_names,
+parser.add_argument('--training-dataset', '-d', metavar='DATASET', default='gl18', choices=training_dataset_names,
                     help='training dataset: ' + 
                         ' | '.join(training_dataset_names) +
-                        ' (default: retrieval-SfM-120k)')
-parser.add_argument('--base-path', '-bp', dest='base_path', default='/media/ssd/datasets/gl18',
-                    help='relative (or absolute) path to the training dataset.')
+                        ' (default: gl18)')
+parser.add_argument('--base-path', '-bp', dest='base_path', default='./data/train/',
+                    help='relative (or absolute) path to the training datasets.')
 parser.add_argument('--no-val', dest='val', action='store_false',
                     help='do not run validation')
 parser.add_argument('--test-datasets', '-td', metavar='DATASETS', default='roxford5k,rparis6k',
@@ -103,13 +103,13 @@ parser.add_argument('--loss-margin', '-lm', metavar='LM', default=0.7, type=floa
 parser.add_argument('--lambda', '-lb', dest='_lambda', default=5, type=float,
                     help='loss term weight: (default: 5)')
 parser.add_argument('--soa', dest='soa', action='store_true',
-                    help='use non-local blocks for self-attention')
+                    help='use non-local blocks for second-order attention (SOA)')
 parser.add_argument('--soa-layers', dest='soa_layers', type=str, default='45',
-                    help='config non-local blocks for self-attention')
+                    help='config which layers of SOAs to include')
 parser.add_argument('--unfreeze-last', '-ul', dest='unfreeze_last', action='store_true',
                     help='toggle whether to freeze weights of last layer')
 parser.add_argument('--sos', dest='sos', action='store_true',
-                    help='use second-order similarity loss')
+                    help='toggle whether to use second-order similarity loss')
 
 
 # train/val options specific for image retrieval learning
@@ -267,9 +267,9 @@ def main():
         if args.unfreeze_last:
             parameters.append({'params': model.features.conv5_x.parameters(), 'lr': args.lr * 0.0}) #, 'weight_decay': 0})
         if '4' in args.soa_layers:
-            parameters.append({'params': model.features.soa4.parameters()}) #, 'lr': args.lr*10}) #, 'weight_decay': 0})
+            parameters.append({'params': model.features.soa4.parameters()})
         if '5' in args.soa_layers:
-            parameters.append({'params': model.features.soa5.parameters()}) #, 'lr': args.lr*10}) #, 'weight_decay': 0})
+            parameters.append({'params': model.features.soa5.parameters()})
     else:
         parameters.append({'params': model.features.parameters()})
     # add local whitening if exists

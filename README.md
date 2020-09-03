@@ -16,7 +16,7 @@ Before going further, please check out [Filip Radenovic's great repository on im
 - [x] Inference code for extracting local descriptors with `solar-local`
 - [x] Second-order attention map visualisation for large images
 - [x] Image matching visualisation
-- [ ] Training code for image retrieval (***work in progress***)
+- [x] Training code for image retrieval
 
 ## Requirements
 - Python 3
@@ -30,7 +30,7 @@ Before going further, please check out [Filip Radenovic's great repository on im
 ## Download model weights and descriptors
 Begin with downloading our best models (both global and local) described in the paper, as well as the pre-computed descriptors of the [1M distractors set](https://github.com/filipradenovic/revisitop).
 
-```
+```sh
 sh download.sh
 ```
 
@@ -58,7 +58,7 @@ After a while, you should be able to get results as below
 ```
 
 Retrieval rankings are visualised in `specs/` using
-```
+```sh
 tensorboard --logdir specs/ --samples_per_plugin images=1000
 ```
 You can view them on your browser at `localhost:6006` in the `IMAGES` tab. Here's an example
@@ -179,25 +179,43 @@ Follow [our demo notebook](demo/solar_local_matching.ipynb) to see a comparison 
 
 
 ## Training SOLAR
-This is currently still a sneak peak of the training, as the [GL18 dataset](https://www.kaggle.com/google/google-landmarks-dataset) consists of only links and many of them have expired, we are still trying to upload the images we used to the cloud, so that the public can retrain the model. We hope to have the complete training code including the download links and pre-processing code by the end of the ECCV week.
 
 <details>
 <summary><b>Pre-processing the training set</b></summary></br>
 
-***Coming Soon!***
+As the [GL18 dataset](https://www.kaggle.com/google/google-landmarks-dataset) consists of only URLs, many of which have already expired, this part of the code lets you download the images we had at the time of training our models. However, this also means that extra storage space would be required for extracting tarballs, so please expect to have ~700GB upwards available. Otherwise, you could still download using [GL18's downloader](https://www.kaggle.com/tobwey/landmark-recognition-challenge-image-downloader) and save the images at `data/train/gl18/jpg`.
+
+To download the images and pre-process them for training, simply run
+```sh
+sh gl18_preprocessing.sh
+```
+
+This would take sometime but you should then see around 1-million images in `data/train/gl18/jpg` and the pickle file `data/train/gl18/db_gl18.pkl` required for training.
+
+If you downloaded the images from the URLs directly, please also make sure you download [train.csv](https://www.kaggle.com/google/google-landmarks-dataset?select=train.csv), [boxes_split1.csv](https://www.kaggle.com/google/google-landmarks-dataset?select=boxes_split1.csv) and [boxes_split2.csv](https://www.kaggle.com/google/google-landmarks-dataset?select=boxes_split2.csv) and save them into `data/train/gl18`. Then you can run
+
+```sh
+cd data/train/gl18 && python3 create_db_pickle.py
+```
+
+You should then see `data/train/gl18/db_gl18.pkl` successfully created. 
 
 </details>
 
 <details>
 <summary><b>Training</b></summary></br>
 
-Once the dataset is downloaded and pre-processed, start the training loops with the settings decribed in the paper by running
+Once you've downloaded and pre-processed GL18, you can start the training with the settings described in the paper by running
 
 ```
 python3 -m solar_global.examples.train specs/gl18 --training-dataset 'gl18' --test-datasets 'roxford5k,rparis6k' --arch 'resnet101' --pool 'gem' --p 3 --loss 'triplet' --pretrained-type 'gl18' --loss-margin 1.25 --optimizer 'adam' --lr 1e-6 -ld 1e-2 --neg-num 5 --query-size 2000 --pool-size 20000 --batch-size 8 --image-size 1024 --update-every 1 --whitening --soa --soa-layers '45' --sos --lambda 10 --no-val --print-freq 10 --flatten-desc
 ```
 
-A more complete documentation of the options would be released with the data pre-processing code.
+You can monitor the training losses and image pairs with tensorboard
+
+```sh
+tensorboard --logdir specs/
+```
 
 </details>
 
