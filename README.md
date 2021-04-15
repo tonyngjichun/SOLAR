@@ -5,7 +5,7 @@ This repository contains the PyTorch implementation of our paper:
 
 **"SOLAR: Second-Order Loss and Attention for Image Retrieval"**   
 Tony Ng, Vassileios Balntas, Yurun Tian, Krystian Mikolajczyk. ECCV 2020.  
-[[arXiv](https://arxiv.org/abs/2001.08972)] [[short video](https://www.youtube.com/watch?v=J1jahze3kds)] [[long video](https://www.youtube.com/watch?v=tfIW0widG9k )] [[ECCV Daily feature article](https://www.rsipvision.com/ECCV2020-Thursday/16/)]
+[[arXiv](https://arxiv.org/abs/2001.08972)] [[short video](https://www.youtube.com/watch?v=J1jahze3kds)] [[long video](https://www.youtube.com/watch?v=tfIW0widG9k )] [[ECCV Daily feature article](https://www.rsipvision.com/ECCV2020-Thursday/16/)] [[OpenCV blog](https://opencv.org/utilising-second-order-information-for-deep-image-retrieval/)]
 
 ![teaser](assets/teaser.png)
 
