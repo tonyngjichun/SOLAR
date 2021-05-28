@@ -97,7 +97,7 @@ and get results as below
 ```
 </details>
 
-## Visualisating second-order attention maps
+## Visualising second-order attention maps
 
 <details>
 <summary><b> Using our interactive visualisation tool </b></summary></br>
